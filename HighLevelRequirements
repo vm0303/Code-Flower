@@ -1,36 +1,22 @@
 High level requirements 
 
-1. 	After the user downloads the app they will be prompted to enter their account credentials or create a new account. 
-	This way the user can change devices they are training on and keep their progress.
+1. On the Homepage of the app the user must be able to select which lesson category they would like to work through. 
+For example they could choose from data type lessons, control structure lessons, etc. 
 
-2.	On the first time opening the app, users will be prompted to go through a tutorial. 
-	However, if the users choose to skip it, the tutorial will be available in the settings.
+2. After selecting a lesson set on the Homepage of the website, the user will be taken to the related set of lessons. 
+For example if you select data type lessons you will then see a lesson called working with strings, a lesson called working with lists, etc. 
 
-3.	On the Homepage of the app the user must be able to select which lesson category they would like to work through. 
-	For example they could choose from data type lessons, control structure lessons, etc. 
+3. There will be a progression bar indicating how many lessons have been completed in the current section, once a certain amount of lessons 
+are completed, a new section will be unlocked.
 
-4.	After selecting a lesson set on the Homepage of the app, the user will be taken to the related set of lessons. 
-	For example if you select data type lessons you will then see a lesson called working with strings, a lesson called working with lists, etc. 
+4. Users should encounter questions that are part of a lesson that allow them to write and execute their program, and check the program's output for correctness.
 
-5.	There will be a progression bar indicating how many lessons have been completed in the current section, 
-	once a certain amount of lessons are completed, a new section will be unlocked.
+5. Each lesson must have a quiz to go along with it. The quiz must be tailored towards the user so they can work on the areas they are struggling with.
 
-6.	Users should encounter questions that are part of a lesson that allow them to write and 
-	execute their program, and check the program's output for correctness.
+6. On the Homepage of the website the user must be able to click a settings button and choose what theme they would like. 
+They can also choose to display and hide certain buttons on the lesson page. Credits will also be available to view in the settings. Users can change font size as well.
 
-7.	Each lesson must have a quiz to go alone with it. The quiz must be tailored towards the user 
-	so they can work on the areas they are struggling with.
+7. After completing certain lessons, users will be able to use the practice function. By clicking the icon on the homepage, 
+they will be able to use a compiler to do programming. There will be a switch to turn on help mode, which will display explanations for keywords when the user taps on them.
 
-8.	On the Homepage of the app the user must be able to click a settings button and choose what theme they would like. 
-	They can also choose to display and hide certain buttons on the lesson page. Credits will also be available to view in the settings. 
-	Users can change font size as well.
-
-9.	User’s progress will be saved through their account. They can link their account to the app to sync their progress on multiple devices. 
-
-10.	After completing certain lessons, users will be able to use the practice function. By clicking the icon on the homepage, 
-	they will be able to use a compiler to do programming. There will be a switch to turn on help mode, which will display explanations 
-	for keywords when the user taps on them.
-
-11.	A lessons API will be created to support the app. The app will make a call to the API everytime it is opened to determine if there 
-	are any additional lessons that need to be downloaded before the user begins training. 
-
+8. An instructor will act as an administrator in order to generate lesson plans and ask questions for the user. 
