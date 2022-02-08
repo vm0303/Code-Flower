@@ -1,4 +1,4 @@
-# Code Flower
+# CodeFlower
 ## By Team Blossom
 ### Project Advisor: Jeremy Blum 
 #### Team Members: Vishal Madhav, Karim Ahemd, Huy Pham, Jacob Moore, and Zheyu Zhang
