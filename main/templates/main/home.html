@@ -18,6 +18,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
+{% load socialaccount %}
+
 <style>
     body {
         background: url("https://www.01alchemy.com/wp-content/uploads/2014/12/binary-tunnel.jpg") no-repeat center center fixed;
@@ -38,7 +40,6 @@
 
 
 <body>
-
 <div class="navbar-fixed">
     <nav class="nav-wrapper black">
         <div class="container">
@@ -48,18 +49,38 @@
             </a>
             <ul class="right hide-on-med-and-down">
                 <li><a href="">Home</a></li>
-                <li><a href="">About</a></li>
-                <li><a href="">Contact</a></li>
-                <li><a href="" class="btn white black-text">Login</a></li>
+                <li><a href="">Topics</a></li>
+                {% if user.is_authenticated %}
+                    <li>Welcome {{ user.username }}</li>
+                {% endif %}
+                <li>{% if user.is_authenticated %}
+                        <a href="{% url 'account_logout' %}"  class="btn white black-text">Logout</a>
+                    {% else %}
+                        <!-- GitHub button starts here -->
+                        <a href="{% provider_login_url 'github' %}"  class="btn white black-text">Login</a>
+                        <!-- GitHub button ends here -->
+                    {% endif %}
+                </li>
             </ul>
         </div>
     </nav>
 </div>
 
-<ul class="sidenav" id="mobile-links">
-    <li><a href="">Home</a></li>
-    <li><a href="">About</a></li>
-    <li><a href="">Contact</a></li>
+<ul class="sidenav collection with-header" id="mobile-links">
+    {% if user.is_authenticated %}
+        <li class="collection-header">Welcome {{ user.username }}</li>
+    {% endif %}
+    <li class="collection-item"><a href="">Home</a></li>
+    <li class="collection-item"><a href="">Topics</a></li>
+    <li class="collection-item">
+        {% if user.is_authenticated %}
+            <a href="{% url 'account_logout' %}"  class="btn white black-text">Logout</a>
+        {% else %}
+            <!-- GitHub button starts here -->
+            <a href="{% provider_login_url 'github' %}"  class="btn white black-text">Login</a>
+            <!-- GitHub button ends here -->
+        {% endif %}
+    </li>
 </ul>
 
 <script type="text/javascript">

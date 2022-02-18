@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
 
-def testing(request):
+def home(request):
     return render(request, 'main/home.html')
 
 
