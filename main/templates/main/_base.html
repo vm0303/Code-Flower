@@ -48,8 +48,8 @@
                 <i class="material-icons">menu</i>
             </a>
             <ul class="right hide-on-med-and-down">
-                <li><a href="">Home</a></li>
-                <li><a href="">Topics</a></li>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'topics' %}">Topics</a></li>
                 {% if user.is_authenticated %}
                     <li>Welcome {{ user.username }}</li>
                 {% endif %}
@@ -70,8 +70,8 @@
     {% if user.is_authenticated %}
         <li class="collection-header">Welcome {{ user.username }}</li>
     {% endif %}
-    <li class="collection-item"><a href="">Home</a></li>
-    <li class="collection-item"><a href="">Topics</a></li>
+    <li class="collection-item"><a href="{% url 'home' %}">Home</a></li>
+    <li class="collection-item"><a href="{% url 'topics' %}">Topics</a></li>
     <li class="collection-item">
         {% if user.is_authenticated %}
             <a href="{% url 'account_logout' %}"  class="btn white black-text">Logout</a>
