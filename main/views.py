@@ -8,6 +8,5 @@ from django.http import HttpResponse
 def home(request):
     return render(request, 'main/home.html')
 
-
-def third_party_login(request):
-    return HttpResponse("<h1>login-test</h1>")
+def topics(request):
+    return render(request, 'main/topics.html')
