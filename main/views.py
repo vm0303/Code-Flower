@@ -10,3 +10,6 @@ def home(request):
 
 def topics(request):
     return render(request, 'main/topics.html')
+
+def lesson_example(request):
+    return render(request, 'main/lesson_example.html')
