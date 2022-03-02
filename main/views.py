@@ -21,3 +21,8 @@ def lessons(request, lesson_id):
     lesson = Lesson.objects.get(id=lesson_id)
     context = {'lesson': lesson}
     return render(request, 'main/lessons.html', context)
+
+def lesson_quizzes(request, lesson_id):
+    lesson = Lesson.objects.get(id=lesson_id)
+    context = {'lesson': lesson}
+    return render(request, 'main/lesson_quizzes.html', context)

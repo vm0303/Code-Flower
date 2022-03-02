@@ -1,0 +1,44 @@
+{% extends "main/_base.html" %}
+{% block body%}
+    <div class="container">
+            <h3 class="white-text">{{ lesson.name }} quiz</h3>
+    </div>
+    <form action="#" id="quiz-form">
+        <div class="container white">
+            {% for q in lesson.lessonquestion_set.all %}
+                <span style="display: block; padding: 1rem"> {{ forloop.counter0 }}. {{ q.question }}</span>
+                <div class="divider"></div>
+                <div class="container" data-question-type={{ q.question_type }}>
+                    {% if q.question_type == "multiple_choice" %}
+                        {% for opt in q.lessonquestionoption_set.all %}
+                            <p>
+                                <label>
+                                    <input class="with-gap" name={{ q.id }} type="radio"/>
+                                    <span class="black-text">{{ opt.option }}</span>
+                                </label>
+                            </p>
+                        {% endfor %}
+                    {% else %}
+                        <div class="row">
+                            {% for opt in q.lessonquestionoption_set.all %}
+                                <div class="col s3">
+                                    <input type="text" placeholder="blank {{ forloop.counter0 }}">
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="divider black"></div>
+            {% endfor %}
+        </div>
+    </form>
+    <div class="container">
+        <button class="btn" type="submit" form="quiz-form" value="Submit" onclick="submitQuiz()">Submit</button>
+    </div>
+
+    <script>
+       function submitQuiz(e) {
+            return false;
+       }
+    </script>
+{% endblock %}
