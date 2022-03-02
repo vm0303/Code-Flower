@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Topic(models.Model):
     name = models.CharField(unique=True, max_length=300)
@@ -59,3 +60,13 @@ class LessonQuestionOption(models.Model):
 
     def __str__(self):
         return self.option
+
+class UserLessonProgress(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    score = models.FloatField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'lesson'], name='combination of lesson and user is unique')
+        ]

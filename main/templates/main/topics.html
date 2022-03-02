@@ -1,4 +1,6 @@
 {% extends "main/_base.html" %}
+{% load custom_tags %}
+
 {% block body%}
 <style>
     .progress-bar {
@@ -41,8 +43,8 @@
                             <div style="width: 100%">
                                 <div style="width: 100%">
                                     <div class="progress-bar">
-                                        <div class="black" style="width:30%">
-                                            <span class="right percentage">30%</span>
+                                        <div class="blue" style="width:{% get_topic_progress user.username topic.id %}%">
+                                            <span class="right percentage">{% get_topic_progress user.username topic.id %}%</span>
                                         </div>
                                     </div>
                                     {{ topic.name }}
