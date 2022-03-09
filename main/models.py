@@ -1,24 +1,52 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import CheckConstraint, Q
 
 class Topic(models.Model):
     name = models.CharField(unique=True, max_length=300)
     published = models.BooleanField()
     date_added = models.DateTimeField(auto_now_add=True)
+    min_passing_score = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(100.0)])
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        constraints = [
+            CheckConstraint(
+                check=Q(min_passing_score__gte=0.0) & Q(min_passing_score__lte=100.0),
+                name='topic_min_passing_score_range'
+            )
+        ]
 
 class Lesson(models.Model):
     name = models.CharField(unique=True, max_length=300)
     published = models.BooleanField()
-    content = models.TextField()
+    content_description = models.TextField()
     needs_IDE = models.BooleanField()
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
     date_added = models.DateTimeField(auto_now_add=True)
+    wanted_number_quiz_questions = models.PositiveSmallIntegerField()
+    min_passing_score = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(100.0)])
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        constraints = [
+            CheckConstraint(
+                check=Q(min_passing_score__gte=0.0) & Q(min_passing_score__lte=100.0),
+                name='lesson_min_passing_score_range',
+            )
+        ]
+
+class LessonParagraph(models.Model):
+    paragraph = models.TextField()
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.paragraph
 
 class LessonQuestion(models.Model):
     name = models.CharField(max_length=300)

@@ -4,7 +4,9 @@
         <div class="card black">
             <div class="card-content white-text">
                 <span class="card-title">{{ lesson.name }}</span>
-                <p>{{ lesson.content }}</p>
+                {% for p in lesson.lessonparagraph_set.all %}
+                    <p>{{ p.paragraph }}</p>
+                {% endfor %}
             </div>
         </div>
     </div>
