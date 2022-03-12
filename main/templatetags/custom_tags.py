@@ -1,6 +1,7 @@
 from django import template
 from django.contrib.auth.models import User
 from main.models import *
+import math
 
 register = template.Library()
 
@@ -13,16 +14,16 @@ def get_topic_progress(user_name, topic_id):
     curr_topic = Topic.objects.get(id=topic_id)
     lessons = Lesson.objects.filter(topic=curr_topic)
     total_lessons = len(lessons)
-    completed_lessons = 0
+    total_credits = 0
 
     for curr_lesson in lessons:
         try:
-            UserLessonProgress.objects.get(user=curr_user, lesson=curr_lesson)
-            completed_lessons += 1
+            score = UserLessonProgress.objects.get(user=curr_user, lesson=curr_lesson).score
+            total_credits += score
         except UserLessonProgress.DoesNotExist:
             pass
 
     if total_lessons <= 0:
-        return 100.0
+        return 100
     else:
-        return completed_lessons/total_lessons*100.0
+        return math.trunc(total_credits/total_lessons)

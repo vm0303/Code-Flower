@@ -5,34 +5,67 @@
             const form = document.querySelector('#quiz-form');
             const questions = form.querySelectorAll('.question');
             let errorMessage = '';
+            const dataArr = [];
 
-            questions.forEach((question) => {
+            for (let i = 0; i < questions.length; i++) {
+                const question = questions[i];
+                const questionToAdd = {};
+                questionToAdd[question.dataset.id] = [];
+
                 if (question.dataset.questionType === 'multiple_choice') {
                     const radioNodeList = question.querySelectorAll('input');
                     let oneChecked = false;
 
-                    radioNodeList.forEach((node) => {
-                        if (node.checked) oneChecked = true;
-                    });
+                    for (let j = 0; j < radioNodeList.length; j++) {
+                        const node = radioNodeList[j];
 
-                    if (!oneChecked) alert("you have no provide an answer for a question");
+                        if (node.checked) {
+                            oneChecked = true;
+
+                            const opt = {};
+                            opt[node.dataset.id] = node.checked;
+                            questionToAdd[question.dataset.id].push(opt);
+                        }
+                    }
+
+                    if (!oneChecked) {
+                        alert("you have no provide an answer for a question");
+                        return;
+                    }
                 }
                 else {
-                    console.log("this is a fill in the blanks style question");
-                }
-            });
+                    const textInputList = question.querySelectorAll('input');
 
-            // data will be an array of dictionaries that contains the
-            // id and the response to the question
+                    for (let j = 0; j < textInputList.length; j++) {
+                        const space = textInputList[j];
+                        const inputValue = space.value.trim();
+
+                        if (inputValue === '') {
+                            alert("you have no provide an answer for a question");
+                            return;
+                        }
+
+                        const opt = {};
+                        opt[space.dataset.id] = inputValue;
+                        questionToAdd[question.dataset.id].push(opt);
+                    }
+                }
+
+                dataArr.push(questionToAdd);
+            }
+
             $.ajax({
+                method: "POST",
                 url: "{% url 'quiz_processing' %}",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                dataType: 'json',
                 data: {
-                    testing: 'hello world'
+                    'quiz': JSON.stringify(dataArr)
                 },
                 success: function (data) {
                     console.log(data);
                 },
-                error: function (request, status, error) {
+                error: function () {
                     alert('Your quiz could not be processed at this moment');
                 }
             });
@@ -48,12 +81,12 @@
                 {% for q in lesson.lessonquestion_set.all %}
                     <span style="display: block; padding: 1rem"> {{ forloop.counter }}. {{ q.question }}</span>
                     <div class="divider"></div>
-                    <div class="container question" data-question-type={{ q.question_type }}>
+                    <div class="container question" data-question-type={{ q.question_type }} data-id={{ q.id }}>
                         {% if q.question_type == "multiple_choice" %}
                             {% for opt in q.lessonquestionoption_set.all %}
                                 <p>
                                     <label>
-                                        <input class="with-gap" name={{ q.id }} type="radio"/>
+                                        <input data-id={{ opt.id }} class="with-gap" name={{ q.id }} type="radio">
                                         <span class="black-text">{{ opt.option }}</span>
                                     </label>
                                 </p>
@@ -62,7 +95,7 @@
                             <div class="row">
                                 {% for opt in q.lessonquestionoption_set.all %}
                                     <div class="col s3">
-                                        <input type="text" placeholder="blank {{ forloop.counter }}">
+                                        <input data-id={{ opt.id }} type="text" placeholder="blank {{ forloop.counter }}">
                                     </div>
                                 {% endfor %}
                             </div>
@@ -77,7 +110,7 @@
         </div>
     {% else %}
         <div class="container">
-                <h3 class="white-text">Sorry! It looks like no quiz questions have been created for this lesson yet</h3>
+            <h3 class="white-text">Sorry! It looks like no quiz questions have been created for this lesson yet</h3>
         </div>
     {% endif %}
 {% endblock %}
