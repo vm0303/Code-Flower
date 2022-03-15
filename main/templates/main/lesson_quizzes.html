@@ -1,7 +1,58 @@
 {% extends "main/_base.html" %}
 {% block body%}
-     <script>
+    <style>
+        .finished-wrapper {
+            display: none;
+            position: absolute;
+            height: 45vmin;
+            width: 60vmin;
+            overflow: hidden;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            animation: show-score 1s ease-in-out;
+        }
+
+        @keyframes show-score {
+            0% {
+                height: 0vmin;
+                width: 0vmin;
+                border-radius: 50%;
+            }
+
+            90% {
+                height: 55vmin;
+                width: 65vmin;
+                border-radius: 10%;
+            }
+        }
+
+        .finished {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .finished-choices-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .finished-choices-wrapper a {
+            margin: .5rem;
+        }
+    </style>
+    <script>
+        let canSubmitQuiz = true;
+
         function submitQuiz() {
+            if (!canSubmitQuiz) return;
+
             const form = document.querySelector('#quiz-form');
             const questions = form.querySelectorAll('.question');
             let errorMessage = '';
@@ -64,6 +115,10 @@
                 },
                 success: function (data) {
                     console.log(data);
+                    document.querySelector('#current-score').innerText = `Current score: ${data['score']}%`;
+                    document.querySelector('#best-score').innerText = `Best score: ${data['best-score']}%`;
+                    document.querySelector('.finished-wrapper').style.display = 'block';
+                    canSubmitQuiz = false;
                 },
                 error: function () {
                     alert('Your quiz could not be processed at this moment');
@@ -113,4 +168,14 @@
             <h3 class="white-text">Sorry! It looks like no quiz questions have been created for this lesson yet</h3>
         </div>
     {% endif %}
+    <div class="finished-wrapper z-depth-5  flow-text">
+        <div class="finished">
+            <span class="score" id="best-score"></span>
+            <span class="score" id="current-score"></span>
+            <div class="finished-choices-wrapper">
+                <a class="btn" href="">retake quiz</a>
+                <a class="btn" href="{% url 'topics' %}">back to topics</a>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -56,13 +56,17 @@ def quiz_processing(request):
 
     score = (total_points / number_questions) * 100
     score = math.trunc(score)
+    best_score = score
     try:
         user_progress = UserLessonProgress.objects.get(user=request.user, lesson=lesson_obj)
+        best_score = user_progress.score
+
         if user_progress.score <= score:
+            best_score = score
             user_progress.score = score
             user_progress.save()
     except UserLessonProgress.DoesNotExist:
         user_progress = UserLessonProgress(user=request.user, lesson=lesson_obj, score=score)
         user_progress.save()
 
-    return JsonResponse({'score': score})
+    return JsonResponse({'score': score, 'best-score': best_score})
