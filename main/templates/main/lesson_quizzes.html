@@ -46,6 +46,26 @@
         .finished-choices-wrapper a {
             margin: .5rem;
         }
+
+        .error-message-wrapper {
+            display: none;
+            position: absolute;
+            width: 65vmin;
+            height: 20vmin;
+            z-index: 10;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+        }
+
+        .error-message {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
     <script>
         let canSubmitQuiz = true;
@@ -80,8 +100,10 @@
                     }
 
                     if (!oneChecked) {
-                        alert("you have no provide an answer for a question");
-                        return;
+                        if (errorMessage === '')
+                            errorMessage = errorMessage.concat(' ', question.dataset.number);
+                        else
+                            errorMessage = errorMessage.concat(', ', question.dataset.number);
                     }
                 }
                 else {
@@ -92,8 +114,10 @@
                         const inputValue = space.value.trim();
 
                         if (inputValue === '') {
-                            alert("you have no provide an answer for a question");
-                            return;
+                            if (errorMessage === '')
+                                errorMessage = errorMessage.concat(' ', question.dataset.number);
+                            else
+                                errorMessage = errorMessage.concat(', ', question.dataset.number);
                         }
 
                         const opt = {};
@@ -103,6 +127,17 @@
                 }
 
                 dataArr.push(questionToAdd);
+            }
+
+            console.log(errorMessage);
+            if (errorMessage !== '') {
+                const parent = document.querySelector('.error-message-wrapper');
+                parent.querySelector('p').innerText = `Question/s ${errorMessage} not answered`;
+                $(parent).show(1000);
+                setTimeout(function () {
+                    $('.error-message-wrapper').hide(1000);
+                }, 3000);
+                return;
             }
 
             $.ajax({
@@ -136,7 +171,8 @@
                 {% for q in lesson.lessonquestion_set.all %}
                     <span style="display: block; padding: 1rem"> {{ forloop.counter }}. {{ q.question }}</span>
                     <div class="divider"></div>
-                    <div class="container question" data-question-type={{ q.question_type }} data-id={{ q.id }}>
+                    <div class="container question" data-question-type={{ q.question_type }}
+                            data-id={{ q.id }} data-number={{ forloop.counter }}>
                         {% if q.question_type == "multiple_choice" %}
                             {% for opt in q.lessonquestionoption_set.all %}
                                 <p>
@@ -176,6 +212,11 @@
                 <a class="btn" href="">retake quiz</a>
                 <a class="btn" href="{% url 'topics' %}">back to topics</a>
             </div>
+        </div>
+    </div>
+    <div class="error-message-wrapper white">
+        <div class="error-message">
+            <p></p>
         </div>
     </div>
 {% endblock %}
