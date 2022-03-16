@@ -1,0 +1,33 @@
+High level requirements 
+
+1. On the Homepage of the app the user must be able to select which lesson category they would like to work through. 
+For example they could choose from data type lessons, control structure lessons, etc. 
+
+2. After selecting a lesson set on the Homepage of the website, the user will be taken to the related set of lessons. 
+For example if you select data type lessons you will then see a lesson called working with strings, a lesson called working with lists, etc. 
+
+3. There will be a progression bar indicating how many lessons have been completed in the current section. 
+Once a certain amount of lessons are completed, a new section will be unlocked.
+
+4. Users should encounter questions that are part of a lesson that allow them to write and execute their 
+program, and check the program's output for correctness.
+
+5. Each lesson must have a quiz to go along with it. The quiz must be tailored towards the user so they 
+can work on the areas they are struggling with.
+
+6. On the Homepage of the website the user must be able to click a settings button and choose what theme they would 
+like. They can also choose to display and hide certain buttons on the lesson page. Credits will also be available to view 
+in the settings. Users can change font size as well.
+
+7. After completing certain lessons, users will be able to use the practice function. By clicking the icon on the homepage, 
+they will be able to use a compiler to do programming. There will be a switch to turn on help mode, which will display explanations 
+for keywords when the user taps on them.
+
+8. An instructor will act as an administrator in order to generate lesson plans and ask questions for the user. 
+
+9. The questions for quizzes will adapt to the user’s understanding of the subject as they go through the lessons
+
+10. User’s progress will be tracked and they will be able to gain achievement through badges and hints
+
+11. Users will be able to comment on questions to express how they thought about the question 
+
