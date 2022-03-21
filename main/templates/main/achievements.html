@@ -34,17 +34,139 @@
       height:100%;
       width:100%;
     }
+    .collapsible {
+      background-color: #777;
+      color: white;
+      cursor: pointer;
+      padding: 18px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 15px;
+    }
 
+    .active, .collapsible:hover {
+      background-color: #555;
+    }
+
+    .description {
+      padding: 0 18px;
+      max-height: 0;
+      overflow: scroll;
+      transition: max-height 0.2s ease-out;
+      background-color: #f1f1f1;
+    }
+
+{#    html, body{#}
+{#  display:grid;#}
+{#  height:100%;#}
+{#  text-align: center;#}
+{#  place-items: center;#}
+{#  background: #dde6f0;#}
+{#}#}
+.circular{
+  height:100px;
+  width: 100px;
+  position: relative;
+  transform:scale(2);
+}
+.circular .inner{
+  position: absolute;
+  z-index: 6;
+  top: 50%;
+  left: 50%;
+  height: 80px;
+  width: 80px;
+  margin: -40px 0 0 -40px;
+  background: #dde6f0;
+  border-radius: 100%;
+
+}
+.circular .number{
+  position: absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%, -50%);
+  z-index:10;
+  font-size:18px;
+  font-weight:500;
+  color:#4158d0;
+}
+.circular .bar{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: #fff;
+  -webkit-border-radius: 100%;
+  clip: rect(0px, 100px, 100px, 50px);
+}
+.circle .bar .progress{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  -webkit-border-radius: 100%;
+  clip: rect(0px, 50px, 100px, 0px);
+  background: #4158d0;
+}
+.circle .left .progress{
+  z-index:1;
+  animation: left 4s linear both;
+}
+@keyframes left{
+  100%{
+    transform: rotate(180deg);
+  }
+}
+.circle .right {
+  transform: rotate(180deg);
+  z-index:3;
+
+}
+.circle .right .progress{
+  animation: right 4s linear both;
+  animation-delay:4s;
+}
+@keyframes right{
+  100%{
+    transform: rotate(180deg);
+  }
+}
     </style>
 
     <script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+      });
+    }
+    function expand(){
+        coll.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+    }
+
     </script>
     <div id="container" style="margin-left: 3vw; margin-right: 3vw">
       <div class="square" >
         <div class="content">
           <div class="table">
             <div class="table-cell" >
-              <span id="totalProgress">display overall progress</span>
+            <span id="totalProgress">display overall progress</span>
+                <progress id="file" value="32" max="100"> 32% </progress>
             </div>
           </div>
         </div>
@@ -54,6 +176,7 @@
           <div class="table">
             <div class="table-cell" >
               <span id="currentTopicProgress">display current topic progress</span>
+                <progress id="file" value="32" max="100"> 32% </progress>
             </div>
           </div>
         </div>
@@ -63,11 +186,15 @@
           <div class="table">
             <div class="table-cell" >
               <span id="unlockedAchievements">display recently unlocked achievements</span>
+                <progress id="file" value="32" max="100"> 32% </progress>
             </div>
           </div>
         </div>
-      </div>
     </div>
-</div>
+        <button class="collapsible" onclick="expand()">Achievement 1</button>
+        <div class="description">
+            <p >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        </div>
+    </div>
 
 {% endblock %}

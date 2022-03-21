@@ -1,12 +1,41 @@
 {% extends "main/_base.html" %}
 {% block body%}
+    {% if user.is_authenticated %}
+    <div style="margin-left: 25%; margin-right:auto" >
+        <span id="consecutive-logins"> this is your ith day logging in!</span>
+        <div><a href="achievements"  id="achievement-total">overall progress</a></div>
+        <a href="achievements" id="current-topic">topic user is working on</a>
+        <form action="achievements">
+            <button onclick="" style="background:url(https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554__340.jpg); background-size:cover; width:25px;height: 25px"></button>
+        </form>
+    </div>
+    {% endif %}
     <div class="container">
         <div class="row">
-            <div class="col s12 m6 l4 center-align white-text">testing</div>
-            <div class="col s12 m6 l4 center-align white-text">testing</div>
-            <div class="col s12 m6 l4 center-align white-text">testing</div>
+            <div class="col s12 m6 white-text">
+                <div class="card transparent">
+                    <div class="card-content">
+                        <span class="card-title">About</span>
+                        <p>CodeFlower is a website that can help middle school and high school students the fundamental
+                            basics of computer programming, which can help be a learning tool for people who want to pursue
+                            Computer Science in the future.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m6 white-text">
+                 <div class="card transparent">
+                    <div class="card-content">
+                        <span class="card-title">How it works</span>
+                        <p> CodeFlower has offers programming topics selected to give you a basic idea of how computer
+                            programming works. Once you select a Topic you are interested in you may work through lessons
+                            and test your code in the browser so you can verify you what you have learned. Once you
+                            are done with a lesson you will take a quiz to solidify your understanding and move to the
+                            next lesson/topic.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button onclick="location.href='/topics'" style="background: url(https://i.natgeofe.com/n/f0dccaca-174b-48a5-b944-9bcddf913645/01-cat-questions-nationalgeographic_1228126_3x4.jpg);background-size:300px,400px;width:300px;height:400px" >TOPICS</button>
-        <div></div>
     </div>
 {% endblock %}
