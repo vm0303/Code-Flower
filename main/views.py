@@ -8,21 +8,33 @@ def home(request):
     return render(request, 'main/home.html')
 
 def topics(request):
+    if not request.user.is_authenticated:
+        return render(request, 'main/home.html', {'no_auth_message': True})
+
     all_topics = Topic.objects.all()
     context = {'topics': all_topics}
     return render(request, 'main/topics.html', context)
 
 def lessons(request, lesson_id):
+    if not request.user.is_authenticated:
+        return render(request, 'main/home.html', {'no_auth_message': True})
+
     lesson = Lesson.objects.get(id=lesson_id)
     context = {'lesson': lesson}
     return render(request, 'main/lessons.html', context)
 
 def lesson_quizzes(request, lesson_id):
+    if not request.user.is_authenticated:
+        return render(request, 'main/home.html', {'no_auth_message': True})
+
     lesson = Lesson.objects.get(id=lesson_id)
     context = {'lesson': lesson}
     return render(request, 'main/lesson_quizzes.html', context)
 
 def quiz_processing(request):
+    if not request.user.is_authenticated:
+        return render(request, 'main/home.html', {'no_auth_message': True})
+
     quiz = request.POST['quiz']
     quiz = json.loads(quiz)
     total_points = 0
