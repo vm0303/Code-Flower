@@ -51,8 +51,13 @@
                             <div class="collapsible-body">
                                 {% for lesson in topic.lesson_set.all %}
                                     {% if lesson.published %}
-                                        <div class="container z-depth-3 flow-text" style="padding: 1rem; margin-bottom: 1rem">
-                                            <a class="btn-large" href="{% url 'lessons' lesson.id %}">{{ lesson.name }}
+                                        <div class="container z-depth-3 flow-text truncate" style="padding: 1rem; margin-bottom: 1rem">
+                                            <div class="progress-bar" style="height: 2rem">
+                                                <div style="width:{% get_lesson_progress user.username lesson.id %}%; height: 100%; background-color: #26a69a;">
+                                                    <span class="right percentage" style="height: 100%; padding-top: .2rem; font-size: 1rem">{% get_lesson_progress user.username lesson.id %}%</span>
+                                                </div>
+                                            </div>
+                                            <a class="btn-small truncate" href="{% url 'lessons' lesson.id %}">{{ lesson.name }}
                                                 <i class="material-icons right">send</i>
                                             </a>
                                         </div>
