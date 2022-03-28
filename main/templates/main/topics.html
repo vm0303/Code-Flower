@@ -51,10 +51,11 @@
                             <div class="collapsible-body">
                                 {% for lesson in topic.lesson_set.all %}
                                     {% if lesson.published %}
-                                        <a class="btn-large" href="{% url 'lessons' lesson.id %}">{{ lesson.name }}
-                                            <i class="material-icons right">send</i>
-                                        </a>
-                                        <div class="divider black"></div>
+                                        <div class="container z-depth-3 flow-text" style="padding: 1rem; margin-bottom: 1rem">
+                                            <a class="btn-large" href="{% url 'lessons' lesson.id %}">{{ lesson.name }}
+                                                <i class="material-icons right">send</i>
+                                            </a>
+                                        </div>
                                     {% endif %}
                                 {% endfor %}
                             </div>
