@@ -18,12 +18,15 @@ def get_topic_progress(user_name, topic_id):
 
     for curr_lesson in lessons:
         try:
-            score = UserLessonProgress.objects.get(user=curr_user, lesson=curr_lesson).score
-            total_credits += score
+            if curr_lesson.published:
+                score = UserLessonProgress.objects.get(user=curr_user, lesson=curr_lesson).score
+                total_credits += score
+            else:
+                total_lessons -= 1
         except UserLessonProgress.DoesNotExist:
             pass
 
     if total_lessons <= 0:
-        return 100
+        return 0
     else:
         return math.trunc(total_credits/total_lessons)
