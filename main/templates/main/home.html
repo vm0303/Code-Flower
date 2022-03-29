@@ -1,7 +1,7 @@
 {% extends "main/_base.html" %}
 {% block body%}
     <div style="margin-left: auto; margin-right:auto" >
-        <span id="consecutive-logins"> this is your ith day logging in!</span>
+        <span id="consecutive-logins" style="color:white"> This is your Day {{ day }}!</span>
         <div><a href="achievements" id="achievement-total">overall progress</a></div>
         <a href="achievements" id="current-topic">topic user is working on</a>
     <form action="achievements">
