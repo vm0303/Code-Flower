@@ -1,0 +1,74 @@
+{% extends "main/_base.html" %}
+{% load custom_tags %}
+
+{% block body%}
+
+<style>
+    .summary-grid {
+        text-align: center;
+        display: grid;
+        grid-template-columns: minmax(20%,30%) minmax(20%,30%) minmax(20%,30%);
+        column-gap: 5%;
+        row-gap: 5%;
+        justify-items: stretch;
+    }
+    .added {
+        padding: 1rem;
+        border-radius: 5px;
+    }
+
+    .add-topics {
+        text-align: center;
+        padding-bottom: 2%;
+    }
+</style>
+
+<div class="container">
+    <div class="account-info">
+        <div class="card black white-text" >
+            <h3 style="padding: 1rem">Account Summary</h3>
+        </div>
+
+        <div class="recent card">
+            <ul class="collapsible" id="topics">
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">arrow_drop_down</i>Recently Added</div>
+                    <div class="collapsible-body">
+                        <div>
+                            - added lesson 1
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="summary-grid">
+            <div class="added card">
+                <i class="large material-icons">book</i>
+                <p>Topics added</p>
+                <button class="btn" id="added-topics">View</button>
+            </div>
+            <div class="added card">
+                <i class="large material-icons">format_list_bulleted</i>
+                <p>Lessons added</p>
+                <button class="btn" id="added-lessons">View</button>
+            </div>
+            <div class="added card">
+                <i class="large material-icons">code</i>
+                <p>Quizzes added</p>
+                <button class="btn" id="added quizzes">View</button>
+            </div>
+        </div>
+    </div>
+    <div class="add-topics card">
+        <h4 style="padding: 1rem">Add new topics here</h4>
+        <button class="btn-floating large">
+            <i class="large material-icons">add</i>
+        </button>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('.collapsible').collapsible();
+    });
+</script>
+{% endblock %}

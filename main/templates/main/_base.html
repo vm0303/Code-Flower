@@ -14,19 +14,25 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 {% load socialaccount %}
 
 <style>
+    html {
+        height: 100%;
+    }
+
     body {
-        background: url("https://www.01alchemy.com/wp-content/uploads/2014/12/binary-tunnel.jpg") no-repeat center center fixed;
+        background: url("https://www.zmescience.com/mrf4u/statics/i/ps/cdn.zmescience.com/wp-content/uploads/2016/08/IkN04WE.jpg?width=1200&enable=upscale") no-repeat center center fixed;
 	    -webkit-background-size: cover;
 	    -moz-background-size: cover;
 	    -o-background-size: cover;
 	    background-size: cover;
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
         animation: fade-in;
         animation-duration: 2s;
     }
@@ -35,6 +41,11 @@
         0% {
             opacity: 0;
         }
+    }
+
+    footer {
+        width: 100%;
+        margin-top: auto;
     }
 </style>
 
@@ -85,6 +96,23 @@
 
 {% block body %}
 {% endblock %}
+
+<footer class="page-footer black">
+    <div class="row container">
+        <div class="col s6" id="about">
+            <h5>Contact Us</h5>
+            <p>testing123@gmail.com</p>
+            <p>123-456-7890</p>
+        </div>
+        <div class="col s6" style="text-align: right">
+            <p>Terms of Service</p>
+            <p>Privacy Policy</p>
+        </div>
+
+    </div>
+    <div class="container" style="text-align: right"><p>© 2022 Copyright Team Blossom</p></div>
+
+</footer>
 
 <script type="text/javascript">
     $(document).ready(() => {

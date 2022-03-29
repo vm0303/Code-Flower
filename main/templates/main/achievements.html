@@ -1,200 +1,120 @@
 {% extends "main/_base.html" %}
 {% load custom_tags %}
 
-{% block body%}
+{% block body %}
     <style>
+        p {
+            color: black;
+        }
 
-    .square {
-      float: left;
-      position: relative;
-      width: 20%;
-      padding-bottom: 20%; /* = width for a 1:1 aspect ratio */
-      margin: 1%;
-      overflow: hidden;
-      background-color: #f3d583
-    }
+        .progress-bar {
+            background-color: whiteSmoke;
+            border-radius: 2px;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25) inset;
+            width: 100%;
+            height: 1.6rem;
+            display: block;
+        }
 
-    .content {
-      position: absolute;
-      height: 80%; /* = 100% - 2*10% padding */
-      width: 90%; /* = 100% - 2*5% padding */
-      padding: 10% 5%;
-    }
+        .progress-bar > div {
+            height: 1.6rem;
+            border-radius: 2px;
+            overflow: auto;
+            display: inline-block;
+            min-width: fit-content;
+        }
 
-
-    .table{
-      display:table;
-      height:100%;
-      width:100%;
-    }
-
-    .table-cell{
-      display:table-cell;
-      vertical-align:middle;
-      height:100%;
-      width:100%;
-    }
-    .collapsible {
-      background-color: #777;
-      color: white;
-      cursor: pointer;
-      padding: 18px;
-      width: 100%;
-      border: none;
-      text-align: left;
-      outline: none;
-      font-size: 15px;
-    }
-
-    .active, .collapsible:hover {
-      background-color: #555;
-    }
-
-    .description {
-      padding: 0 18px;
-      max-height: 0;
-      overflow: scroll;
-      transition: max-height 0.2s ease-out;
-      background-color: #f1f1f1;
-    }
-
-{#    html, body{#}
-{#  display:grid;#}
-{#  height:100%;#}
-{#  text-align: center;#}
-{#  place-items: center;#}
-{#  background: #dde6f0;#}
-{#}#}
-.circular{
-  height:100px;
-  width: 100px;
-  position: relative;
-  transform:scale(2);
-}
-.circular .inner{
-  position: absolute;
-  z-index: 6;
-  top: 50%;
-  left: 50%;
-  height: 80px;
-  width: 80px;
-  margin: -40px 0 0 -40px;
-  background: #dde6f0;
-  border-radius: 100%;
-
-}
-.circular .number{
-  position: absolute;
-  top:50%;
-  left:50%;
-  transform: translate(-50%, -50%);
-  z-index:10;
-  font-size:18px;
-  font-weight:500;
-  color:#4158d0;
-}
-.circular .bar{
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  background: #fff;
-  -webkit-border-radius: 100%;
-  clip: rect(0px, 100px, 100px, 50px);
-}
-.circle .bar .progress{
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  -webkit-border-radius: 100%;
-  clip: rect(0px, 50px, 100px, 0px);
-  background: #4158d0;
-}
-.circle .left .progress{
-  z-index:1;
-  animation: left 4s linear both;
-}
-@keyframes left{
-  100%{
-    transform: rotate(180deg);
-  }
-}
-.circle .right {
-  transform: rotate(180deg);
-  z-index:3;
-
-}
-.circle .right .progress{
-  animation: right 4s linear both;
-  animation-delay:4s;
-}
-@keyframes right{
-  100%{
-    transform: rotate(180deg);
-  }
-}
+        .percentage {
+            background-color: #26a69a;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25) inset;
+            height: 1.6rem;
+            padding-left: .1rem;
+        }
     </style>
 
     <script>
-    var coll = document.getElementsByClassName("collapsible");
-    var i;
-
-    for (i = 0; i < coll.length; i++) {
-      coll[i].addEventListener("click", function() {
-        this.classList.toggle("active");
-        var content = this.nextElementSibling;
-        if (content.style.maxHeight){
-          content.style.maxHeight = null;
-        } else {
-          content.style.maxHeight = content.scrollHeight + "px";
-        }
-      });
-    }
-    function expand(){
-        coll.classList.toggle("active");
-        var content = this.nextElementSibling;
-        if (content.style.maxHeight){
-          content.style.maxHeight = null;
-        } else {
-          content.style.maxHeight = content.scrollHeight + "px";
-        }
-    }
-
     </script>
-    <div id="container" style="margin-left: 3vw; margin-right: 3vw">
-      <div class="square" >
-        <div class="content">
-          <div class="table">
-            <div class="table-cell" >
-            <span id="totalProgress">display overall progress</span>
-                <progress id="file" value="32" max="100"> 32% </progress>
+        <div class="container">
+        <div class="row" >
+            <div class="col s12 m12 white-text ">
+                    <div class="card-content"   >
+                        <div class="card white">
+                            <ul class="collapsible" id="topics">
+                                <li >
+                                    <div class="collapsible-header" style="padding: 1rem; margin-bottom: 1rem">
+                                        <div style="width: 100%">
+                                            <div style="width: 100%">
+                                                {% for t in topics %}
+                                                {% check_completion user.username t.id forloop.counter0 ach %}
+                                                {% endfor %}
+                                                {% for a in ach %}
+                                                    {% if a.completed == True %}
+                                                    {{ ach_completed |add:"1" }}
+                                                        {{ ach_completed }}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <p>Achievement Unlocked: {{ ach_completed}} / {{ ach_total }}</p>
+                                                <div class="progress-bar">
+                                                    <div class="blue"
+                                                         style="width:{% get_achievement_progress ach_completed ach_total ach %}%">
+                                                        <span class="right percentage">{% get_achievement_progress ach_completed ach_total ach  %}%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="collapsible-body" >
+                                        <p>body</p>
+                                        {% for i in ach %}
+                                        <div class="card white">
+                                            <ul class="collapsible" id="topics">
+                                                <li>
+                                                    <div class="collapsible-header">
+                                                        <div style="width: 100%">
+                                                            <div style="width: 100%">
+                                                                <p>Achievement{{ i.name }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="collapsible-body">
+                                                        {% if i.completed %}
+                                                        <p>completed</p>
+                                                        {% else %}
+                                                        <p>not completed</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card white">
+                            <ul class="collapsible" id="topics">
+                                <li>
+                                    <div class="collapsible-header">
+                                        <div style="width: 100%">
+                                            <div style="width: 100%">
+                                                <p>header</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="collapsible-body">
+                                        <p>body</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
             </div>
-          </div>
-        </div>
-      </div>
-    <div class="square" >
-        <div class="content">
-          <div class="table">
-            <div class="table-cell" >
-              <span id="currentTopicProgress">display current topic progress</span>
-                <progress id="file" value="32" max="100"> 32% </progress>
-            </div>
-          </div>
-        </div>
-      </div>
-    <div class="square" >
-        <div class="content">
-          <div class="table">
-            <div class="table-cell" >
-              <span id="unlockedAchievements">display recently unlocked achievements</span>
-                <progress id="file" value="32" max="100"> 32% </progress>
-            </div>
-          </div>
-        </div>
-    </div>
-        <button class="collapsible" onclick="expand()">Achievement 1</button>
-        <div class="description">
-            <p >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-        </div>
-    </div>
 
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('.collapsible').collapsible();
+        });
+    </script>
 {% endblock %}
