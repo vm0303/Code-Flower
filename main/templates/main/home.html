@@ -1,10 +1,13 @@
 {% extends "main/_base.html" %}
 {% block body%}
-    {% if no_auth_message %}
-        <div class="container white flow-text z-depth-5 align-center" style="margin-top:1rem; margin-bottom: 1rem; padding: 1rem">
-            You must login to access content outside of the home page.
-        </div>
-    {% endif %}
+    <div style="margin-left: auto; margin-right:auto" >
+        <span id="consecutive-logins" style="color:white"> This is your Day {{ day }}!</span>
+        <div><a href="achievements" id="achievement-total">overall progress</a></div>
+        <a href="achievements" id="current-topic">topic user is working on</a>
+    <form action="achievements">
+            <button onclick="" style="background:url(https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554__340.jpg); background-size:cover; width:25px;height: 25px"></button>
+    </form>
+    </div>
     <div class="container">
         <div class="row">
             <div class="col s12 m6 white-text">
