@@ -98,13 +98,3 @@ class UserLessonProgress(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['user', 'lesson'], name='combination of lesson and user is unique')
         ]
-
-
-class Achievement(models.Model):
-    name = models.CharField(unique=True, max_length=300)
-    completed = models.BooleanField()
-    date_added = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-
