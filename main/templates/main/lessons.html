@@ -1,0 +1,24 @@
+{% extends "main/_base.html" %}
+{% block body%}
+    <div class="container">
+        <div class="card black">
+            <div class="card-content white-text">
+                <span class="card-title">{{ lesson.name }}</span>
+                {% for p in lesson.lessonparagraph_set.all %}
+                    <p>{{ p.paragraph }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% if lesson.needs_IDE %}
+        <div class="container">
+            <iframe src="https://trinket.io/embed/python/1be8c8e660?runOption=run"
+                width="100%" height="356" frameborder="0" marginwidth="0" marginheight="0" allowfullscreen>
+            </iframe>
+        </div>
+    {% endif %}
+    <div class="container">
+        <a class="btn" href="{% url 'lesson_quizzes' lesson.id %}">quiz</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,222 @@
+{% extends "main/_base.html" %}
+{% block body%}
+    <style>
+        .finished-wrapper {
+            display: none;
+            position: absolute;
+            height: 45vmin;
+            width: 60vmin;
+            overflow: hidden;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            animation: show-score 1s ease-in-out;
+        }
+
+        @keyframes show-score {
+            0% {
+                height: 0vmin;
+                width: 0vmin;
+                border-radius: 50%;
+            }
+
+            90% {
+                height: 55vmin;
+                width: 65vmin;
+                border-radius: 10%;
+            }
+        }
+
+        .finished {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .finished-choices-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .finished-choices-wrapper a {
+            margin: .5rem;
+        }
+
+        .error-message-wrapper {
+            display: none;
+            position: absolute;
+            width: 65vmin;
+            height: 20vmin;
+            z-index: 10;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+        }
+
+        .error-message {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+    <script>
+        let canSubmitQuiz = true;
+
+        function submitQuiz() {
+            if (!canSubmitQuiz) return;
+
+            const form = document.querySelector('#quiz-form');
+            const questions = form.querySelectorAll('.question');
+            let errorMessage = '';
+            const dataArr = [];
+
+            for (let i = 0; i < questions.length; i++) {
+                const question = questions[i];
+                const questionToAdd = {};
+                questionToAdd[question.dataset.id] = [];
+
+                if (question.dataset.questionType === 'multiple_choice') {
+                    const radioNodeList = question.querySelectorAll('input');
+                    let oneChecked = false;
+
+                    for (let j = 0; j < radioNodeList.length; j++) {
+                        const node = radioNodeList[j];
+
+                        if (node.checked) {
+                            oneChecked = true;
+
+                            const opt = {};
+                            opt[node.dataset.id] = node.checked;
+                            questionToAdd[question.dataset.id].push(opt);
+                        }
+                    }
+
+                    if (!oneChecked) {
+                        if (errorMessage === '')
+                            errorMessage = errorMessage.concat(' ', question.dataset.number);
+                        else
+                            errorMessage = errorMessage.concat(', ', question.dataset.number);
+                    }
+                }
+                else {
+                    const textInputList = question.querySelectorAll('input');
+
+                    for (let j = 0; j < textInputList.length; j++) {
+                        const space = textInputList[j];
+                        const inputValue = space.value.trim();
+
+                        if (inputValue === '') {
+                            if (errorMessage === '')
+                                errorMessage = errorMessage.concat(' ', question.dataset.number);
+                            else
+                                errorMessage = errorMessage.concat(', ', question.dataset.number);
+                        }
+
+                        const opt = {};
+                        opt[space.dataset.id] = inputValue;
+                        questionToAdd[question.dataset.id].push(opt);
+                    }
+                }
+
+                dataArr.push(questionToAdd);
+            }
+
+            console.log(errorMessage);
+            if (errorMessage !== '') {
+                const parent = document.querySelector('.error-message-wrapper');
+                parent.querySelector('p').innerText = `Question/s ${errorMessage} not answered`;
+                $(parent).show(1000);
+                setTimeout(function () {
+                    $('.error-message-wrapper').hide(1000);
+                }, 3000);
+                return;
+            }
+
+            $.ajax({
+                method: "POST",
+                url: "{% url 'quiz_processing' %}",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                dataType: 'json',
+                data: {
+                    'quiz': JSON.stringify(dataArr)
+                },
+                success: function (data) {
+                    console.log(data);
+                    document.querySelector('#current-score').innerText = `Current score: ${data['score']}%`;
+                    document.querySelector('#best-score').innerText = `Best score: ${data['best-score']}%`;
+                    document.querySelector('.finished-wrapper').style.display = 'block';
+                    canSubmitQuiz = false;
+                },
+                error: function () {
+                    alert('Your quiz could not be processed at this moment');
+                }
+            });
+        }
+    </script>
+
+    {% if lesson.lessonquestion_set.all %}
+        <div class="container">
+                <h3 class="white-text">{{ lesson.name }} quiz</h3>
+        </div>
+        <form action="#" id="quiz-form">
+            <div class="container white">
+                {% for q in lesson.lessonquestion_set.all %}
+                    <span style="display: block; padding: 1rem"> {{ forloop.counter }}. {{ q.question }}</span>
+                    <div class="divider"></div>
+                    <div class="container question" data-question-type={{ q.question_type }}
+                            data-id={{ q.id }} data-number={{ forloop.counter }}>
+                        {% if q.question_type == "multiple_choice" %}
+                            {% for opt in q.lessonquestionoption_set.all %}
+                                <p>
+                                    <label>
+                                        <input data-id={{ opt.id }} class="with-gap" name={{ q.id }} type="radio">
+                                        <span class="black-text">{{ opt.option }}</span>
+                                    </label>
+                                </p>
+                            {% endfor %}
+                        {% else %}
+                            <div class="row">
+                                {% for opt in q.lessonquestionoption_set.all %}
+                                    <div class="col s3">
+                                        <input data-id={{ opt.id }} type="text" placeholder="blank {{ forloop.counter }}">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="divider black"></div>
+                {% endfor %}
+            </div>
+        </form>
+        <div class="container">
+            <button class="btn" onclick="submitQuiz()">Submit</button>
+        </div>
+    {% else %}
+        <div class="container">
+            <h3 class="white-text">Sorry! It looks like no quiz questions have been created for this lesson yet</h3>
+        </div>
+    {% endif %}
+    <div class="finished-wrapper z-depth-5  flow-text">
+        <div class="finished">
+            <span class="score" id="best-score"></span>
+            <span class="score" id="current-score"></span>
+            <div class="finished-choices-wrapper">
+                <a class="btn" href="">retake quiz</a>
+                <a class="btn" href="{% url 'topics' %}">back to topics</a>
+            </div>
+        </div>
+    </div>
+    <div class="error-message-wrapper white z-index-5">
+        <div class="error-message">
+            <p></p>
+        </div>
+    </div>
+{% endblock %}
