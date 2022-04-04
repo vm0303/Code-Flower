@@ -25,7 +25,7 @@
     }
 
     body {
-        background: url("https://images.wallpaperscraft.com/image/single/planet_saturn_space_ring_9789_1920x1080.jpg") no-repeat center center fixed;
+        background: url("https://www.zmescience.com/mrf4u/statics/i/ps/cdn.zmescience.com/wp-content/uploads/2016/08/IkN04WE.jpg?width=1200&enable=upscale") no-repeat center center fixed;
 	    -webkit-background-size: cover;
 	    -moz-background-size: cover;
 	    -o-background-size: cover;
@@ -61,6 +61,7 @@
             <ul class="right hide-on-med-and-down">
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url 'topics' %}">Topics</a></li>
+                <li><a href="{% url 'achievements' %}">Achievements</a></li>
                 {% if user.is_authenticated %}
                     <li>Welcome {{ user.username }}</li>
                 {% endif %}
@@ -83,6 +84,7 @@
     {% endif %}
     <li class="collection-item"><a href="{% url 'home' %}">Home</a></li>
     <li class="collection-item"><a href="{% url 'topics' %}">Topics</a></li>
+    <li class="collection-item"><a href="{% url 'achievements' %}">Achievements</a></li>
     <li class="collection-item">
         {% if user.is_authenticated %}
             <a href="{% url 'account_logout' %}"  class="btn white black-text">Logout</a>
@@ -111,13 +113,18 @@
 
     </div>
     <div class="container" style="text-align: right"><p>© 2022 Copyright Team Blossom</p></div>
-
+<form>
+            <button onclick="meow()" style="background:url(https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554__340.jpg); background-size:cover; width:25px;height: 25px"></button>
+    </form>
 </footer>
 
 <script type="text/javascript">
     $(document).ready(() => {
         $('.sidenav').sidenav()
     });
+     function meow(){
+        alert('Meow')
+    }
 </script>
 
 </body>
