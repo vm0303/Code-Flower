@@ -8,33 +8,6 @@ import json, math
 def home(request):
     return render(request, 'main/home.html')
 
-def achievements(request):
-    class Achievement:
-        def __init__(self, name, completed):
-            self.name = name
-            self.completed = completed
-
-    all_topics = Topic.objects.all()
-    topicCount = len(all_topics)
-    achievements = [Achievement('First Lesson', False),
-                    Achievement('Achievement', False), Achievement('Achievement', False),
-                    Achievement('Achievement', False), Achievement('Achievement', False),
-                    Achievement('first Login', False)]
-
-    achievementCount=len(achievements)
-    lessonCount=len(Lesson.objects.all())
-
-
-    context = {
-        "ach": achievements,
-        "ach_completed": 0,
-        "ach_total": achievementCount,
-        'topics': all_topics,
-        'topicCount': topicCount,
-        'lessonCount': lessonCount,
-    }
-    return render(request, 'main/achievements.html', context)
-
 def topics(request):
     if not request.user.is_authenticated:
         return render(request, 'main/home.html', {'no_auth_message': True})
