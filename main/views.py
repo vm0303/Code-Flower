@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Topic, Lesson, LessonQuestion, LessonQuestionOption, UserLessonProgress
+
 from django.http import JsonResponse
 import json, math
 
@@ -30,6 +31,68 @@ def lesson_quizzes(request, lesson_id):
     lesson = Lesson.objects.get(id=lesson_id)
     context = {'lesson': lesson}
     return render(request, 'main/lesson_quizzes.html', context)
+
+def instructor(request):
+    if request.user.is_superuser:
+        all_topics = Topic.objects.all()
+        context = {'topics': all_topics}
+        return render(request, 'main/admin.html', context)
+    else:
+        return render(request, 'main/home.html')
+
+def create_topic(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        topic = request.POST.get('topic')
+        published = request.POST.get('published')
+        score = request.POST.get('min_passing_score')
+
+        new_topic = Topic(name=topic, published=published, min_passing_score=score)
+        new_topic.save()
+    return JsonResponse({'topic': topic})
+
+def edit_topic(request, topic_id):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    topic = Topic.objects.get(id=topic_id)
+    lesson = Lesson.objects.filter(topic = topic_id)
+
+
+    context = {'topics': topic, 'lessons': lesson}
+    return render(request, 'main/add_lesson.html', context)
+
+def create_lesson(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        lname = request.POST.get('lname')
+        desc = request.POST.get('desc')
+        minScore = request.POST.get('min_score')
+        quizNum = request.POST.get('quiz_num')
+        published = request.POST.get('published')
+        ide = request.POST.get('ide')
+        topic_id = request.POST.get('topic')
+        topic = Topic.objects.get(id=topic_id)
+
+        new_lesson = Lesson(name=lname, published=published, content_description=desc, needs_IDE=ide, topic=topic,
+                            wanted_number_quiz_questions=quizNum, min_passing_score=minScore)
+        new_lesson.save()
+
+    return JsonResponse({})
+
+def edit_lesson(request, lesson_id):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    lesson = Lesson.objects.get(id=lesson_id)
+    quiz = LessonQuestion.objects.filter(lesson = lesson_id)
+
+    context = {'lesson': lesson, 'quiz': quiz}
+    return render(request, 'main/add_quizzes.html', context)
 
 def quiz_processing(request):
     if not request.user.is_authenticated:

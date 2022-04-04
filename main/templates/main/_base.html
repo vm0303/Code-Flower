@@ -25,7 +25,7 @@
     }
 
     body {
-        background: url("https://images.wallpaperscraft.com/image/single/planet_saturn_space_ring_9789_1920x1080.jpg") no-repeat center center fixed;
+        background: url("https://www.zmescience.com/mrf4u/statics/i/ps/cdn.zmescience.com/wp-content/uploads/2016/08/IkN04WE.jpg?width=1200&enable=upscale") no-repeat center center fixed;
 	    -webkit-background-size: cover;
 	    -moz-background-size: cover;
 	    -o-background-size: cover;
@@ -61,6 +61,9 @@
             <ul class="right hide-on-med-and-down">
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url 'topics' %}">Topics</a></li>
+                {% if user.is_superuser %}
+                    <li class="collection-item"><a href="{% url 'instructor' %}">Instructor</a></li>
+                {% endif %}
                 {% if user.is_authenticated %}
                     <li>Welcome {{ user.username }}</li>
                 {% endif %}
@@ -83,6 +86,9 @@
     {% endif %}
     <li class="collection-item"><a href="{% url 'home' %}">Home</a></li>
     <li class="collection-item"><a href="{% url 'topics' %}">Topics</a></li>
+    {% if user.is_superuser %}
+        <li class="collection-item"><a href="{% url 'instructor' %}">Instructor Page</a></li>
+    {% endif %}
     <li class="collection-item">
         {% if user.is_authenticated %}
             <a href="{% url 'account_logout' %}"  class="btn white black-text">Logout</a>
