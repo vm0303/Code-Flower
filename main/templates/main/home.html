@@ -1,6 +1,10 @@
 {% extends "main/_base.html" %}
 {% block body%}
-
+    {% if no_auth_message %}
+        <div class="container white flow-text z-depth-5 align-center" style="margin-top:1rem; margin-bottom: 1rem; padding: 1rem">
+            You must login to access content outside of the home page.
+        </div>
+    {% endif %}
     <div class="container">
         <div class="row">
             <div class="col s12 m6 white-text">
@@ -29,5 +33,4 @@
             </div>
         </div>
     </div>
-
 {% endblock %}
