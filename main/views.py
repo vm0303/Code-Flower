@@ -51,7 +51,9 @@ def create_topic(request):
 
         new_topic = Topic(name=topic, published=published, min_passing_score=score)
         new_topic.save()
-    return JsonResponse({'topic': topic})
+    # return JsonResponse({'topic': topic})
+    # return HttpResponseRedirect('main/topics.html')
+    return render(request, 'main/home.html')
 
 def edit_topic(request, topic_id):
     if not request.user.is_superuser:
