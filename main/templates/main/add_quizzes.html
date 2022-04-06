@@ -1,0 +1,128 @@
+{% extends "main/_base.html" %}
+{% load custom_tags %}
+
+{% block body%}
+<script>
+function yesnoCheck() {
+if(document.getElementById('fillcheck').checked) {
+        document.getElementById('fillBlank').style.visibility = 'visible';
+    }
+    else document.getElementById('fillBlank').style.visibility = 'hidden';
+
+
+if(document.getElementById('multcheck').checked) {
+        document.getElementById('multchoice').style.visibility = 'visible';
+    }
+    else document.getElementById('multchoice').style.visibility = 'hidden';
+}
+
+function edit_lesson() {
+    const lname = $('#lname').val();
+    const desc = $("#desc").val();
+    const min_score = $('#min-score').val();
+    const quiz_num = $('#quiz-num').val();
+    let publish;
+    let ide;
+
+    if($('#publish:checked').val() == null) publish = 'False';
+    else publish = 'True';
+
+    if($('#ide:checked').val() == null) ide = 'False';
+    else ide = 'True';
+
+    $.ajax({
+        method: "POST",
+        url: "{% url 'edit_lesson' lesson.id %}",
+        headers: {'X-CSRFToken': '{{ csrf_token }}'},
+        data: {
+            'lname': lname,
+            'desc': desc,
+            'quiz_num': quiz_num,
+            'min_score': min_score,
+            'published': publish,
+            'ide': ide
+        },
+        success: function (data) {
+            $('#edit-form').html(data)
+        },
+        error: function () {
+            alert('Cannot save lesson at this time');
+        }
+    });
+}
+</script>
+<div class="container">
+
+<div class="card" id="edit-form" style="padding: 1rem">
+    <h4>Editing lesson</h4>
+            <label for="lname">Set Lesson Name:</label>
+          <input type="text" id="lname" name="lname" value="{{ lesson.name }}"><br><br>
+          <label for="publish">
+                <input type="checkbox" id="publish" name="accept" value="true"/>
+                <span>Publish</span>
+          </label>
+          <input type="checkbox" id="publish" name="publish" ><br><br>
+            <label for="Cdesc">Set Lesson Description:</label>
+            <textarea  rows="4" cols="50" name="Cdesc" id="desc">{{lesson.content_description}}</textarea><br>
+            <label for="min-score" style="display: block" >Number of quizzes</label>
+            <input type="number" id="quiz-num" style="width: 25%" value="{{ lesson.wanted_number_quiz_questions }}" min="0" max="100"><br><br>
+            <label for="min-score" style="display: block" >Minimum passing score</label>
+            <input type="number" id="min-score" style="width: 25%" value="{{ lesson.min_passing_score }}" min="0" max="100"><br><br>
+          <label for="ide">
+                <input type="checkbox" id="ide" name="accept" value="true"/>
+                <span>IDE</span>
+            </label>
+
+    <button class="btn right-align right" onclick="edit_lesson()">Save</button>
+</div>
+    <div class="white">
+    <form>
+      <label for="qname" id="qname">Question:</label>
+      <input type="text"  name="qname" ><br><br>
+        <label for="publish">
+                <input type="checkbox" id="publish" name="accept" value="true"/>
+                <span>Publish</span>
+          </label>
+        <p>Question type: </p>
+        <div>
+            <label>
+                <input type="radio" name="qtype" value="fill_in_blank" onclick="yesnoCheck()" id="fillcheck"/>
+                <span>Fill in the blank</span>
+            </label>
+            <label>
+                <input type="radio" name="qtype" value="multiple_choice" onclick="yesnoCheck()" id="multcheck"/>
+                <span>Multiple Choice</span>
+            </label>
+        </div>
+
+    <div id="container" style="position: relative">
+        <div id="multchoice" style="visibility:hidden;position: absolute">
+            <p><i>please press the checkbox near an option if it is correct</i></p>
+            Option 1: <input type='text' id='yes' name='yes'> <input type="checkbox" id="mult1" name="mult1"><br>
+            Option 2: <input type='text' id='yes' name='yes'> <input type="checkbox" id="mult2" name="mult2"><br>
+            Option 3: <input type='text' id='yes' name='yes'> <input type="checkbox" id="mult2" name="mult3"><br>
+            Option 4: <input type='text' id='yes' name='yes'> <input type="checkbox" id="mult2" name="mult4"><br>
+            Option 5: <input type='text' id='yes' name='yes'> <input type="checkbox" id="mult2" name="mult5"><br>
+        </div>
+           <div id="fillBlank" style="visibility:hidden;position: absolute">
+               <p><i>please press the checkbox near an option if it is correct</i></p>
+            Option 1: <input type='text' id='opt1' name='opt1'> <input type="checkbox" id="fill1" name="fill1"><br>
+            Option 2: <input type='text' id='opt2' name='opt2'> <input type="checkbox" id="fill2" name="fill2"><br>
+            Option 3: <input type='text' id='opt3' name='opt3'> <input type="checkbox" id="fill3" name="fill3"><br>
+        </div>
+        <br><br><br><br><br><br><br><br><br><br>
+    </div>
+
+
+      <label for="Difficulty" id="label1">Difficulty</label>
+      <select name="Difficulty" id="Difficulty">
+        <option value="Easy">Easy</option>
+        <option value="Average">Average</option>
+        <option value="Challenging">Challenging</option>
+      </select><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+    </div>
+</div>
+{% endblock %}
