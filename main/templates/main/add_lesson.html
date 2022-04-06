@@ -12,7 +12,8 @@
                 <i class="large material-icons">add</i>
             </button>
     </div>
-        {% for lesson in lessons %}
+    <div id="lessonlist">
+        {% for lesson in lessons reversed %}
             <div class="card">
                 <p style="padding: 1rem; display: inline-block">{{ lesson.name }}</p>
                 <a href="{% url 'edit_lesson' lesson.id %}">
@@ -25,6 +26,7 @@
                 </button>
             </div>
         {% endfor %}
+    </div>
     </div>
     <div id="add-lesson" class="modal">
         <div class="modal-content">
@@ -72,7 +74,7 @@
                 method: "POST",
                 url: "{% url 'create_lesson' %}",
                 headers: {'X-CSRFToken': '{{ csrf_token }}'},
-                dataType: 'json',
+                {#dataType: 'json',#}
                 data: {
                     'topic' : {{ topics.id }},
                     'lname': lname,
@@ -83,7 +85,7 @@
                     'ide': ide
                 },
                 success: function (data) {
-
+                    $('#lessonlist').html(data);
                 },
                 error: function () {
                     alert('Cannot add new topic at this time');

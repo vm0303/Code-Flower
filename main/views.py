@@ -83,8 +83,8 @@ def create_lesson(request):
         new_lesson = Lesson(name=lname, published=published, content_description=desc, needs_IDE=ide, topic=topic,
                             wanted_number_quiz_questions=quizNum, min_passing_score=minScore)
         new_lesson.save()
-
-    return JsonResponse({})
+        lesson = Lesson.objects.filter(topic=topic)
+    return render(request, 'main/lesson_template.html', {'lessons': lesson})
 
 def edit_lesson(request, lesson_id):
     if not request.user.is_superuser:
