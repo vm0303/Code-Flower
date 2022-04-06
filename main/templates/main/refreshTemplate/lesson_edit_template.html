@@ -9,9 +9,9 @@
             <label for="Cdesc">Set Lesson Description:</label>
             <textarea  rows="4" cols="50" name="Cdesc" id="desc" value="{{lesson.content_description}}"></textarea><br>
             <label for="min-score" style="display: block" >Number of quizzes</label>
-            <input type="number" id="quiz-num" style="width: 25%"  min="0" max="100"><br><br>
+            <input type="number" id="quiz-num" style="width: 25%" value="{{ lesson.wanted_number_quiz_questions }}" min="0" max="100"><br><br>
             <label for="min-score" style="display: block" >Minimum passing score</label>
-            <input type="number" id="min-score" style="width: 25%"  min="0" max="100"><br><br>
+            <input type="number" id="min-score" style="width: 25%" value="{{ lesson.min_passing_score }}" min="0" max="100"><br><br>
           <label for="ide">
                 <input type="checkbox" id="ide" name="accept" value="true"/>
                 <span>IDE</span>
