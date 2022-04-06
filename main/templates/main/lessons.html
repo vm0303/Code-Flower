@@ -21,4 +21,11 @@
     <div class="container" style="margin-bottom: 2rem">
         <a class="btn" href="{% url 'lesson_quizzes' lesson.id %}">quiz</a>
     </div>
+    <div class="container white">
+        {% for comment in lesson.lessoncomment_set.all %}
+            <p>
+                {{ comment.body }}
+            </p>
+        {% endfor %}
+    </div>
 {% endblock %}
