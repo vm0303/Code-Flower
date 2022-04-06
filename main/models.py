@@ -107,3 +107,12 @@ class LessonComment(models.Model):
 
     def __str__(self):
         return self.lesson.name
+
+class LessonCommentReply(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    parent = models.ForeignKey(LessonComment, on_delete=models.CASCADE)
+    body = models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.parent.body

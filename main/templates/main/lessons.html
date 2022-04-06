@@ -25,6 +25,11 @@
         {% for comment in lesson.lessoncomment_set.all %}
             <p>
                 {{ comment.body }}
+                <div class="container">
+                    {% for reply in comment.lessoncommentreply_set.all %}
+                        <p>{{ reply.body }}</p>
+                    {% endfor %}
+                </div>
             </p>
         {% endfor %}
     </div>
