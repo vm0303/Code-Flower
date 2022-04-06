@@ -98,14 +98,13 @@
             method: "POST",
             url: "{% url 'create_topic' %}",
             headers: {'X-CSRFToken': '{{ csrf_token }}'},
-            {#dataType: 'json',#}
             data: {
                 'topic': topic,
                 'min_passing_score': passScore,
                 'published': publish
             },
             success: function (data) {
-                $('#topics-data').html(data)
+                $('#topics-data').html(data);
             },
             error: function () {
                 alert('Cannot add new topic at this time');
