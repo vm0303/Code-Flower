@@ -55,6 +55,7 @@
         </div>
     </div>
 
+
     <script>
         function add_lesson() {
             const lname = $('#lname').val();
@@ -74,7 +75,6 @@
                 method: "POST",
                 url: "{% url 'create_lesson' %}",
                 headers: {'X-CSRFToken': '{{ csrf_token }}'},
-                {#dataType: 'json',#}
                 data: {
                     'topic' : {{ topics.id }},
                     'lname': lname,
@@ -88,7 +88,7 @@
                     $('#lessonlist').html(data);
                 },
                 error: function () {
-                    alert('Cannot add new topic at this time');
+                    alert('Cannot add new lesson at this time');
                 }
             });
         }

@@ -35,7 +35,9 @@ def lesson_quizzes(request, lesson_id):
 def instructor(request):
     if request.user.is_superuser:
         all_topics = Topic.objects.all()
-        context = {'topics': all_topics}
+        all_lessons = Lesson.objects.all()
+        all_quizzes = LessonQuestion.objects.all()
+        context = {'topics': all_topics, 'lessons': all_lessons, 'quizzes': all_quizzes}
         return render(request, 'main/admin.html', context)
     else:
         return render(request, 'main/home.html')
@@ -53,7 +55,7 @@ def create_topic(request):
         new_topic.save()
     topics = Topic.objects.all()
 
-    return render(request, 'main/topic_template.html', {'topics': topics})
+    return render(request, 'main/refreshTemplate/topic_template.html', {'topics': topics})
 
 def edit_topic(request, topic_id):
     if not request.user.is_superuser:
@@ -84,17 +86,29 @@ def create_lesson(request):
                             wanted_number_quiz_questions=quizNum, min_passing_score=minScore)
         new_lesson.save()
         lesson = Lesson.objects.filter(topic=topic)
-    return render(request, 'main/lesson_template.html', {'lessons': lesson})
+    return render(request, 'main/refreshTemplate/lesson_template.html', {'lessons': lesson})
 
 def edit_lesson(request, lesson_id):
     if not request.user.is_superuser:
         return render(request, 'main/home.html')
 
-    lesson = Lesson.objects.get(id=lesson_id)
-    quiz = LessonQuestion.objects.filter(lesson = lesson_id)
+    if request.method == 'POST':
+        lesson = Lesson.objects.get(id=lesson_id)
+        lesson.name = request.POST.get('lname')
+        lesson.content_description = request.POST.get('desc')
+        lesson.min_passing_score = request.POST.get('min_score')
+        lesson.wanted_number_quiz_questions = request.POST.get('quiz_num')
+        lesson.published = request.POST.get('published')
+        lesson.needs_IDE = request.POST.get('ide')
+        lesson.save()
+        return render(request, 'main/refreshTemplate/lesson_edit_template.html', {'lesson' : lesson})
 
-    context = {'lesson': lesson, 'quiz': quiz}
-    return render(request, 'main/add_quizzes.html', context)
+    else:
+        lesson = Lesson.objects.get(id=lesson_id)
+        quiz = LessonQuestion.objects.filter(lesson = lesson_id)
+
+        context = {'lesson': lesson, 'quiz': quiz}
+        return render(request, 'main/add_quizzes.html', context)
 
 def quiz_processing(request):
     if not request.user.is_authenticated:

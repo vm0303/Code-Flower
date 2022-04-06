@@ -15,10 +15,45 @@ if(document.getElementById('multcheck').checked) {
     }
     else document.getElementById('multchoice').style.visibility = 'hidden';
 }
+
+function edit_lesson() {
+    const lname = $('#lname').val();
+    const desc = $("#desc").val();
+    const min_score = $('#min-score').val();
+    const quiz_num = $('#quiz-num').val();
+    let publish;
+    let ide;
+
+    if($('#publish:checked').val() == null) publish = 'False';
+    else publish = 'True';
+
+    if($('#ide:checked').val() == null) ide = 'False';
+    else ide = 'True';
+
+    $.ajax({
+        method: "POST",
+        url: "{% url 'edit_lesson' lesson.id %}",
+        headers: {'X-CSRFToken': '{{ csrf_token }}'},
+        data: {
+            'lname': lname,
+            'desc': desc,
+            'quiz_num': quiz_num,
+            'min_score': min_score,
+            'published': publish,
+            'ide': ide
+        },
+        success: function (data) {
+            $('#edit-form').html(data)
+        },
+        error: function () {
+            alert('Cannot save lesson at this time');
+        }
+    });
+}
 </script>
 <div class="container">
 
-<div class="card" style="padding: 1rem">
+<div class="card" id="edit-form" style="padding: 1rem">
     <h4>Editing lesson</h4>
             <label for="lname">Set Lesson Name:</label>
           <input type="text" id="lname" name="lname" value="{{ lesson.name }}"><br><br>
@@ -38,8 +73,7 @@ if(document.getElementById('multcheck').checked) {
                 <span>IDE</span>
             </label>
 
-    <button class="btn right-align right">Save</button>
-
+    <button class="btn right-align right" onclick="edit_lesson()">Save</button>
 </div>
     <div class="white">
     <form>
