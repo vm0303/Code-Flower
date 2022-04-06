@@ -5,7 +5,7 @@
             <div class="card-content white-text">
                 <span class="card-title">{{ lesson.name }}</span>
                 {% for p in lesson.lessonparagraph_set.all %}
-                    <p>{{ p.paragraph }}</p>
+                    <p style="white-space: pre-wrap">{{ p.paragraph }}</p>
                 {% endfor %}
             </div>
         </div>
@@ -18,7 +18,7 @@
             </iframe>
         </div>
     {% endif %}
-    <div class="container">
+    <div class="container" style="margin-bottom: 2rem">
         <a class="btn" href="{% url 'lesson_quizzes' lesson.id %}">quiz</a>
     </div>
 {% endblock %}

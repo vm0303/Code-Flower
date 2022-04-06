@@ -82,7 +82,7 @@ class LessonQuestion(models.Model):
         ]
 
 class LessonQuestionOption(models.Model):
-    option = models.CharField(max_length=500)
+    option = models.TextField()
     option_correct = models.BooleanField()
     lesson_question = models.ForeignKey(LessonQuestion, on_delete=models.CASCADE)
 

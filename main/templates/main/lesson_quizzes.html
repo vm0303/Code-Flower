@@ -169,7 +169,7 @@
         <form action="#" id="quiz-form">
             <div class="container white">
                 {% for q in lesson.lessonquestion_set.all %}
-                    <span style="display: block; padding: 1rem"> {{ forloop.counter }}. {{ q.question }}</span>
+                    <span style="display: block; white-space: pre-wrap; padding: 1rem"> {{ forloop.counter }}. {{ q.question }}</span>
                     <div class="divider"></div>
                     <div class="container question" data-question-type={{ q.question_type }}
                             data-id={{ q.id }} data-number={{ forloop.counter }}>
@@ -178,7 +178,7 @@
                                 <p>
                                     <label>
                                         <input data-id={{ opt.id }} class="with-gap" name={{ q.id }} type="radio">
-                                        <span class="black-text">{{ opt.option }}</span>
+                                        <span class="black-text" style="white-space: pre-wrap">{{ opt.option }}</span>
                                     </label>
                                 </p>
                             {% endfor %}
@@ -196,7 +196,7 @@
                 {% endfor %}
             </div>
         </form>
-        <div class="container">
+        <div class="container" style="margin-bottom: 2rem">
             <button class="btn" onclick="submitQuiz()">Submit</button>
         </div>
     {% else %}
