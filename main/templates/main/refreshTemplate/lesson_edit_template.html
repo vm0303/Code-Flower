@@ -1,0 +1,20 @@
+    <h4>Editing lesson</h4>
+            <label for="lname">Set Lesson Name:</label>
+          <input type="text" id="lname" name="lname" value="{{ lesson.name }}"><br><br>
+          <label for="publish">
+                <input type="checkbox" id="publish" name="accept" value="true"/>
+                <span>Publish</span>
+          </label>
+          <input type="checkbox" id="publish" name="publish" ><br><br>
+            <label for="Cdesc">Set Lesson Description:</label>
+            <textarea  rows="4" cols="50" name="Cdesc" id="desc" value="{{lesson.content_description}}"></textarea><br>
+            <label for="min-score" style="display: block" >Number of quizzes</label>
+            <input type="number" id="quiz-num" style="width: 25%" value="{{ lesson.wanted_number_quiz_questions }}" min="0" max="100"><br><br>
+            <label for="min-score" style="display: block" >Minimum passing score</label>
+            <input type="number" id="min-score" style="width: 25%" value="{{ lesson.min_passing_score }}" min="0" max="100"><br><br>
+          <label for="ide">
+                <input type="checkbox" id="ide" name="accept" value="true"/>
+                <span>IDE</span>
+            </label>
+
+    <button class="btn right-align right" onclick="edit_lesson()">Save</button>

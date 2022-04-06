@@ -32,17 +32,17 @@
             <div class="added card">
                 <i class="large material-icons">book</i>
                 <p>Topics added</p>
-                <button class="btn" id="added-topics">View</button>
+                <button class="btn modal-trigger" id="added-topics" data-target="all-topics">View</button>
             </div>
             <div class="added card">
                 <i class="large material-icons">format_list_bulleted</i>
                 <p>Lessons added</p>
-                <button class="btn" id="added-lessons">View</button>
+                <button class="btn modal-trigger" id="added-lessons" data-target="all-lessons">View</button>
             </div>
             <div class="added card">
                 <i class="large material-icons">code</i>
                 <p>Quizzes added</p>
-                <button class="btn" id="added quizzes">View</button>
+                <button class="btn modal-trigger" id="added quizzes" data-target="all-quizzes">View</button>
             </div>
         </div>
     </div>
@@ -85,6 +85,52 @@
             <button class="btn modal-close" onclick="addTopic()">Add</button>
         </div>
     </div>
+
+    <div id="all-topics" class="modal">
+        <div class="modal-content">
+          <h4>All topics</h4>
+            <hr>
+            {% for topic in topics reversed %}
+            <div class="card">
+                <p style="padding: 1rem; display: inline-block">{{ topic.name }}</p>
+            </div>
+        {% endfor %}
+        </div>
+        <div class="modal-footer">
+            <button class="btn modal-close red" >Close</button>
+        </div>
+    </div>
+
+    <div id="all-lessons" class="modal">
+        <div class="modal-content">
+          <h4>All lessons</h4>
+            <hr>
+            {% for lesson in lessons reversed %}
+            <div class="card">
+                <p style="padding: 1rem; display: inline-block">{{ lesson.name }}</p>
+            </div>
+        {% endfor %}
+        </div>
+        <div class="modal-footer">
+            <button class="btn modal-close red" >Close</button>
+        </div>
+    </div>
+
+    <div id="all-quizzes" class="modal">
+        <div class="modal-content">
+          <h4>All quizzes</h4>
+            <hr>
+            {% for quiz in quizzes reversed %}
+            <div class="card">
+                <p style="padding: 1rem; display: inline-block">{{ quiz.name }}</p>
+            </div>
+        {% endfor %}
+        </div>
+        <div class="modal-footer">
+            <button class="btn modal-close red" >Close</button>
+        </div>
+    </div>
+
 <script>
 
     function addTopic() {
@@ -94,25 +140,17 @@
         if($('#publish:checked').val() == null) publish = 'False';
         else publish = 'True';
 
-         const html = '<div class="card"> <p style="padding: 1rem; display: inline-block">'+ topic +'</p> ' +
-             '<a href="{'+ '% url \'edit_topic\' topic.id %' + '}">' +
-                    '<button class="btn-floating" style="float:right">' +
-                        '<i class="material-icons">edit</i> </button> </a>' +
-                '<button class="btn-floating red" style="float:right"><i class="material-icons">check_box</i></button>'
-            +'</div>'
-
         $.ajax({
             method: "POST",
             url: "{% url 'create_topic' %}",
             headers: {'X-CSRFToken': '{{ csrf_token }}'},
-            dataType: 'json',
             data: {
                 'topic': topic,
                 'min_passing_score': passScore,
                 'published': publish
             },
             success: function (data) {
-                $('#topics-data').prepend(html);
+                $('#topics-data').html(data);
             },
             error: function () {
                 alert('Cannot add new topic at this time');
