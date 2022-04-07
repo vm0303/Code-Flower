@@ -11,5 +11,6 @@ urlpatterns = [
     path('edit/lesson/(<lesson_id>\d+)', views.edit_lesson, name='edit_lesson'),
     path('lessons/(<lesson_id>\d+)', views.lessons, name='lessons'),
     path('lesson_quizzes/(<lesson_id>\d+)', views.lesson_quizzes, name='lesson_quizzes'),
-    path('validate/lesson_quiz', views.quiz_processing, name='quiz_processing')
+    path('validate/lesson_quiz', views.quiz_processing, name='quiz_processing'),
+    path('lesson/submit/comment', views.create_lesson_comment, name='create_lesson_comment')
 ]
