@@ -1,16 +1,52 @@
- {% for comment in comments %}
+{% for comment in comments %}
     <div class="card blue-grey darken-1">
         <div class="card-content white-text">
             <span class="card-title">{{ comment.user.username }}</span>
-            <p>{{ comment.body }}</p>
+            <p style="white-space: pre-wrap">{{ comment.body }}</p>
         </div>
         <div class="card-action">
             <span class="white-text">-{{ comment.date_added }}</span>
-            <a class="btn">replies</a>
+            <button data-target="{{ comment.id }}" class="btn modal-trigger">Replies</button>
             {% if user.username == comment.user.username %}
                 <a class="btn">edit</a>
-                <a class="btn red">delete</a>
+                <a class="btn red" data-comment-id="{{ comment.id }}" onclick="deleteLessonComment()">delete</a>
             {% endif %}
         </div>
     </div>
+    <div id="{{ comment.id }}" class="modal">
+        <div class="modal-content">
+            <div class="reply-form" id="reply-form-{{ comment.id }}" style="width: 95%; height: 5rem; margin:auto">
+                <textarea placeholder="Reply..." style="width: 100%; height: 100%; outline: none"></textarea>
+            </div>
+            <button class="btn-small submit-reply-form" data-parent-id="{{ comment.id }}" style="margin-left:2.5%; margin-top:2px; margin-bottom: .5rem;">Reply</button>
+            <div id="replies-{{ comment.id }}" style="overflow: scroll; height: 20vh; padding: .2rem;">
+                {% for reply in comment.lessoncommentreply_set.all %}
+                    <div class="card blue-grey darken-1">
+                        <div class="card-content white-text">
+                            <span class="card-title">{{ reply.user.username }}</span>
+                            <p style="white-space: pre-wrap">{{ reply.body }}</p>
+                        </div>
+                        <div class="card-action">
+                            <span class="white-text">-{{ reply.date_added }}</span>
+                            {% if user.username == reply.user.username %}
+                            <a class="btn">edit</a>
+                            <a class="btn red">delete</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#!" class="modal-close waves-effect waves-green btn red">close</a>
+        </div>
+    </div>
 {% endfor %}
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.modal').modal();
+    });
+
+    applyListenersForReplyForms();
+</script>
