@@ -1,5 +1,5 @@
 {% extends "main/_base.html" %}
-{% block body %}
+{% block body%}
     <div class="container">
         <div class="card black">
             <div class="card-content white-text">
@@ -14,7 +14,7 @@
     {% if lesson.needs_IDE %}
         <div class="container">
             <iframe src="https://trinket.io/embed/python/1be8c8e660?runOption=run"
-                    width="100%" height="356" frameborder="0" marginwidth="0" marginheight="0" allowfullscreen>
+                width="100%" height="356" frameborder="0" marginwidth="0" marginheight="0" allowfullscreen>
             </iframe>
         </div>
     {% endif %}
@@ -26,40 +26,66 @@
             <div class="comment-form" style="width: 95%; height: 5rem; margin:auto">
                 <input type="hidden" value="{{ user.username }}">
                 <input type="hidden" value="{{ lesson.id }}">
-                <textarea placeholder="Comment..." id="comment-body"
-                          style="width: 100%; height: 100%; outline: none"></textarea>
+                <textarea placeholder="Comment..." id="comment-body" style="width: 100%; height: 100%; outline: none"></textarea>
             </div>
-            <button id="submit-comment-form" class="btn-small"
-                    style="margin-left:2.5%; margin-top:2px; margin-bottom: .5rem;">Comment
-            </button>
+            <button id="submit-comment-form" class="btn-small" style="margin-left:2.5%; margin-top:2px; margin-bottom: .5rem;">Comment</button>
         </div>
-        <div id="comments-wrapper"
-             style="overflow: scroll; height: 20rem; padding:1rem; border: solid lightslategrey 2px">
+        <div id="comments-wrapper" style="overflow: scroll; height: 20rem; padding:1rem;">
             {% for comment in lesson.lessoncomment_set.all %}
                 <div class="card blue-grey darken-1">
                     <div class="card-content white-text">
                         <span class="card-title">{{ comment.user.username }}</span>
-                        <p>{{ comment.body }}</p>
+                        <p style="white-space: pre-wrap">{{ comment.body }}</p>
                     </div>
                     <div class="card-action">
                         <span class="white-text">-{{ comment.date_added }}</span>
-                        <a class="btn">replies</a>
+                        <button data-target="{{ comment.id }}" class="btn modal-trigger">Replies</button>
                         {% if user.username == comment.user.username %}
-                            <a class="btn">edit</a>
-                            <a class="btn red">delete</a>
+                            <a class="btn red" data-comment-id="{{ comment.id }}" onclick="deleteLessonComment()">delete</a>
                         {% endif %}
+                    </div>
+                </div>
+                <div id="{{ comment.id }}" class="modal">
+                    <div class="modal-content">
+                        <div class="reply-form" id="reply-form-{{ comment.id }}" style="width: 95%; height: 5rem; margin:auto">
+                            <textarea placeholder="Reply..." style="width: 100%; height: 100%; outline: none"></textarea>
+                        </div>
+                        <button class="btn-small submit-reply-form" data-parent-id="{{ comment.id }}" style="margin-left:2.5%; margin-top:2px; margin-bottom: .5rem;">Reply</button>
+                        <div id="replies-{{ comment.id }}" style="overflow: scroll; height: 20vh; padding: .2rem;">
+                            {% for reply in comment.lessoncommentreply_set.all %}
+                                <div class="card blue-grey darken-1">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">{{ reply.user.username }}</span>
+                                        <p style="white-space: pre-wrap">{{ reply.body }}</p>
+                                    </div>
+                                    <div class="card-action">
+                                        <span class="white-text">-{{ reply.date_added }}</span>
+                                        {% if user.username == reply.user.username %}
+                                            <a class="btn red" data-comment-id="{{ reply.parent.id }}" data-reply-id="{{ reply.id }}" onclick="deleteLessonCommentReply()">delete</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                      <a href="#!" class="modal-close waves-effect waves-green btn red">close</a>
                     </div>
                 </div>
             {% endfor %}
         </div>
     </div>
     <script type="text/javascript">
-        document.getElementById('submit-comment-form').addEventListener('click', function () {
+        $(document).ready(function(){
+            $('.modal').modal();
+        });
+
+        function submitCommentForm() {
             const form = document.querySelector('.comment-form');
             const inputs = form.querySelectorAll('input');
-            const body = form.querySelector('textarea')
+            const body = form.querySelector('textarea');
 
-            $.ajax({
+             $.ajax({
                 method: "POST",
                 url: "{% url 'create_lesson_comment' %}",
                 headers: {'X-CSRFToken': '{{ csrf_token }}'},
@@ -69,12 +95,86 @@
                     'body': body.value
                 },
                 success: function (data) {
-                    $('#comments-wrapper').html(data);
+                    body.value = "";
+                   $('#comments-wrapper').html(data);
                 },
                 error: function () {
                     alert('Your comment could not be processed at this moment');
                 }
             });
-        })
+        }
+
+        function deleteLessonComment() {
+            const comment_id = event.target.dataset.commentId;
+
+            $.ajax({
+                method: "POST",
+                url: "{% url 'delete_lesson_comment' %}",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                data: {
+                    'comment_id': comment_id
+                },
+                success: function (data) {
+                   $('#comments-wrapper').html(data);
+                },
+                error: function () {
+                    alert('Cannot delete your comment at this moment, try logging out and then back in.');
+                }
+            });
+        }
+
+        document.getElementById('submit-comment-form').addEventListener('click', submitCommentForm);
+
+        function applyListenersForReplyForms() {
+            const replyFormSubmitters = document.querySelectorAll('.submit-reply-form');
+            if (replyFormSubmitters !==  undefined) {
+                replyFormSubmitters.forEach((rep) => {
+                    rep.addEventListener('click', function (e) {
+                        const comment_id = e.target.dataset.parentId;
+                        const parent = document.getElementById(`reply-form-${comment_id}`);
+                        const body = parent.querySelector('textarea');
+
+                         $.ajax({
+                            method: "POST",
+                            url: "{% url 'create_lesson_comment_reply' %}",
+                            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                            data: {
+                                'comment_id': comment_id,
+                                'body': body.value
+                            },
+                            success: function (data) {
+                                body.value = "";
+                               $(`#replies-${comment_id}`).html(data);
+                            },
+                            error: function () {
+                                alert('Your reply could not be processed at this moment');
+                            }
+                        });
+                    });
+                });
+            }
+        }
+
+        applyListenersForReplyForms();
+
+        function deleteLessonCommentReply() {
+            const reply_id = event.target.dataset.replyId;
+            const comment_id = event.target.dataset.commentId;
+
+            $.ajax({
+                method: "POST",
+                url: "{% url 'delete_lesson_comment_reply' %}",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                data: {
+                    'reply_id': reply_id
+                },
+                success: function (data) {
+                   $(`#replies-${comment_id}`).html(data);
+                },
+                error: function () {
+                    alert('Cannot delete your reply at this moment, try logging out and then back in.');
+                }
+            });
+        }
     </script>
 {% endblock %}

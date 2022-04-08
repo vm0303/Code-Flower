@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import Topic, Lesson, LessonQuestion, LessonQuestionOption, UserLessonProgress, LessonComment
+from .models import Topic, Lesson, LessonQuestion, LessonQuestionOption, UserLessonProgress, LessonComment, LessonCommentReply
 from django.contrib.auth.models import User
 
 from django.http import JsonResponse
@@ -171,6 +171,7 @@ def quiz_processing(request):
 
     return JsonResponse({'score': score, 'best-score': best_score})
 
+#this should throw an exceptions instead of redirect
 def create_lesson_comment(request):
     if not request.user.is_authenticated:
         return render(request, 'main/home.html', {'no_auth_message': True})
@@ -186,5 +187,65 @@ def create_lesson_comment(request):
     new_comment = LessonComment(user=user, lesson=lesson_foreign_key, body=body)
     new_comment.save()
 
-    comments = LessonComment.objects.all()
+    comments = LessonComment.objects.filter(lesson=lesson_foreign_key)
     return render(request, 'main/refreshTemplate/lesson_comments.html', {'comments':comments})
+
+#this could be updated to use the delete method
+#this should also throw exceptions instead of delete
+def delete_lesson_comment(request):
+    if not request.user.is_authenticated:
+        return render(request, 'main/home.html', {'no_auth_message': True})
+
+    if request.method != 'POST':
+        return render(request, 'main/home.html')
+
+    comment_id = request.POST.get('comment_id')
+    comment = LessonComment.objects.get(id=comment_id)
+
+    #this needs to be tested
+    if request.user != comment.user:
+        return render(request, 'main/home.html')
+
+    lesson_foreign_key = comment.lesson
+    comment.delete()
+
+    comments = LessonComment.objects.filter(lesson=lesson_foreign_key)
+    return render(request, 'main/refreshTemplate/lesson_comments.html', {'comments':comments})
+
+
+#this should throw an exception instead of redirect
+def create_lesson_comment_reply(request):
+    if not request.user.is_authenticated:
+        return render(request, 'main/home.html', {'no_auth_message': True})
+
+    if request.method != 'POST':
+        return render(request, 'main/home.html')
+
+    comment_id = request.POST.get('comment_id')
+    comment_foreign_key = LessonComment.objects.get(id=comment_id)
+    body = request.POST.get('body')
+    new_comment_reply = LessonCommentReply(user=request.user, parent=comment_foreign_key, body=body)
+    new_comment_reply.save()
+
+    replies = LessonCommentReply.objects.filter(parent=comment_foreign_key)
+    return render(request, 'main/refreshTemplate/lesson_comment_replies.html', {'replies':replies})
+
+#this should throw an exception instead of redirect
+def delete_lesson_comment_reply(request):
+    if not request.user.is_authenticated:
+        return render(request, 'main/home.html', {'no_auth_message': True})
+
+    if request.method != 'POST':
+        return render(request, 'main/home.html')
+
+    reply_id = request.POST.get('reply_id')
+    reply = LessonCommentReply.objects.get(id=reply_id)
+
+    if request.user != reply.user:
+        return render(request, 'main/home.html')
+
+    comment_foreign_key = reply.parent
+    reply.delete()
+
+    replies = LessonCommentReply.objects.filter(parent=comment_foreign_key)
+    return render(request, 'main/refreshTemplate/lesson_comment_replies.html', {'replies': replies})
