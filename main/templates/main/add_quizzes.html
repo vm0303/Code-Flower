@@ -53,8 +53,9 @@ function edit_lesson() {
 </script>
 <div class="container">
 
+
 <div class="card" id="edit-form" style="padding: 1rem">
-    <h4>Editing lesson</h4>
+    <h4>{{ topic.name }}</h4>
             <label for="lname">Set Lesson Name:</label>
           <input type="text" id="lname" name="lname" value="{{ lesson.name }}"><br><br>
           <label for="publish">
@@ -75,53 +76,60 @@ function edit_lesson() {
 
     <button class="btn right-align right" onclick="edit_lesson()">Save</button>
 </div>
-    <div class="white">
+    <div class="card">
+        <h2>Quizzes</h2>
+            {% for quiz in quizzes reversed %}
+            <div class="card">
+                <p style="padding: 1rem; display: inline-block">{{ quiz.name }}</p>
+            </div>
+        {% endfor %}
+</div>
+
+    <div class="white" style="padding: 1rem">
     <form>
       <label for="qname" id="qname">Question:</label>
       <input type="text"  name="qname" ><br><br>
-        <label for="publish">
-                <input type="checkbox" id="publish" name="accept" value="true"/>
+        <label for="publish2">
+                <input type="checkbox" id="publish2" name="accept" value="true"/>
                 <span>Publish</span>
           </label>
         <p>Question type: </p>
         <div>
             <label>
-                <input type="radio" name="qtype" value="fill_in_blank" onclick="yesnoCheck()" id="fillcheck"/>
-                <span>Fill in the blank</span>
-            </label>
-            <label>
                 <input type="radio" name="qtype" value="multiple_choice" onclick="yesnoCheck()" id="multcheck"/>
                 <span>Multiple Choice</span>
             </label>
+            <label>
+                <input type="radio" name="qtype" value="fill_in_blank" onclick="yesnoCheck()" id="fillcheck"/>
+                <span>Fill in the blank</span>
+            </label>
         </div>
-
-    <div id="container" style="position: relative">
-        <div id="multchoice" style="visibility:hidden;position: absolute">
+    <div id="container"  style="position: relative">
+        <div id="fillBlank" style="visibility:hidden; position: absolute">
+            <p><i>Please press the checkbox near an option if it is correct</i></p>
+            Option 1: <input type='text' id='fill1' name='opt1'> <input type="checkbox" id="fill1" name="fill1">
+            Option 2: <input type='text' id='fill2' name='opt2'> <input type="checkbox" id="fill2" name="fill2">
+            Option 3: <input type='text' id='fill3' name='opt3'> <input type="checkbox" id="fill3" name="fill3">
+        </div>
+        <div id="multchoice" style="visibility:hidden">
             <p><i>please press the checkbox near an option if it is correct</i></p>
-            Option 1: <input type='text' id='yes' name='yes'> <input type="checkbox" id="mult1" name="mult1"><br>
-            Option 2: <input type='text' id='yes' name='yes'> <input type="checkbox" id="mult2" name="mult2"><br>
-            Option 3: <input type='text' id='yes' name='yes'> <input type="checkbox" id="mult2" name="mult3"><br>
-            Option 4: <input type='text' id='yes' name='yes'> <input type="checkbox" id="mult2" name="mult4"><br>
-            Option 5: <input type='text' id='yes' name='yes'> <input type="checkbox" id="mult2" name="mult5"><br>
+            Option 1: <input type='text' id='yes' name='yes'/> <input type="checkbox" id="mult1" name="mult1"/>
+            Option 2: <input type='text' id='yes' name='yes'/> <input type="checkbox" id="mult2" name="mult2"/>
+            Option 3: <input type='text' id='yes' name='yes'/> <input type="checkbox" id="mult3" name="mult3"/>
+            Option 4: <input type='text' id='yes' name='yes'/> <input type="checkbox" id="mult4" name="mult4"/>
+            Option 5: <input type='text' id='yes' name='yes'/> <input type="checkbox" id="mult5" name="mult5"/>
         </div>
-           <div id="fillBlank" style="visibility:hidden;position: absolute">
-               <p><i>please press the checkbox near an option if it is correct</i></p>
-            Option 1: <input type='text' id='opt1' name='opt1'> <input type="checkbox" id="fill1" name="fill1"><br>
-            Option 2: <input type='text' id='opt2' name='opt2'> <input type="checkbox" id="fill2" name="fill2"><br>
-            Option 3: <input type='text' id='opt3' name='opt3'> <input type="checkbox" id="fill3" name="fill3"><br>
+
+          <div class="input-field col s12">
+            <select>
+              <option value="" disabled selected>Choose your option</option>
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+              <option value="3">Option 3</option>
+            </select>
+            <label>Materialize Select</label>
         </div>
-        <br><br><br><br><br><br><br><br><br><br>
     </div>
-
-
-      <label for="Difficulty" id="label1">Difficulty</label>
-      <select name="Difficulty" id="Difficulty">
-        <option value="Easy">Easy</option>
-        <option value="Average">Average</option>
-        <option value="Challenging">Challenging</option>
-      </select><br><br>
-
-        <input type="submit" value="Submit">
     </form>
     </div>
 </div>

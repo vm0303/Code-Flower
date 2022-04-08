@@ -106,8 +106,9 @@ def edit_lesson(request, lesson_id):
     else:
         lesson = Lesson.objects.get(id=lesson_id)
         quiz = LessonQuestion.objects.filter(lesson = lesson_id)
+        topic = lesson.topic
 
-        context = {'lesson': lesson, 'quiz': quiz}
+        context = {'lesson': lesson, 'quizzes': quiz, 'topic': topic}
         return render(request, 'main/add_quizzes.html', context)
 
 def quiz_processing(request):
