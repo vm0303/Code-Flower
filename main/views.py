@@ -142,9 +142,10 @@ def create_question(request, lesson_id):
         for option in options:
             option_name = option['option_name']
             option_answer = option['option_answer']
-            question_option = LessonQuestionOption(option=option_name, option_correct=option_answer,
-                                                   lesson_question=lesson_question)
-            question_option.save()
+            if option_name != '':
+                question_option = LessonQuestionOption(option=option_name, option_correct=option_answer,
+                                                       lesson_question=lesson_question)
+                question_option.save()
 
         quiz = LessonQuestion.objects.filter(lesson=lesson_id)
         return render(request, 'main/refreshTemplate/quiz_template.html', {'quizzes': quiz})
