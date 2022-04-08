@@ -46,7 +46,6 @@
                     'ide': ide
                 },
                 success: function (data) {
-                    $('#edit-form').html(data)
                 },
                 error: function () {
                     alert('Cannot save lesson at this time');
@@ -57,27 +56,74 @@
         function add_question() {
             const title = $('#qtitle').val();
             const question = $('#qname').val();
-            let publish;
-            if ($('#publish:checked').val() == null) publish = 'False';
-            else publish = 'True';
+            const publish = $('#publish:checked').val() == null ? 'True' : 'False';
+            {#if ($('#publish:checked').val() == null) publish = 'False';#}
+            {#else publish = 'True';#}
             const question_type = $('input[name="qtype"]:checked').val();
-
+            const difficulty = $('#difficulty').val();
+            let optionsToAdd;
             if (question_type === 'multiple_choice') {
-                const optionsToAdd = {
-                    option1: {option1_name: $('#mult_option1'), option1_answer: $('#mult1').val()==null?'False':'True'},
-                    option2: {option2_name: $('#mult_option2'), option1_answer: $('#mult2').val()==null?'False':'True'},
-                    option3: {option3_name: $('#mult_option3'), option1_answer: $('#mult3').val()==null?'False':'True'},
-                    option4: {option4_name: $('#mult_option4'), option1_answer: $('#mult4').val()==null?'False':'True'}
-                }
+                optionsToAdd = [
+                    {
+                        option_name: $('#mult_option1').val(),
+                        option_answer: $('#mult1:checked').val() == null ? 'False' : 'True'
+                    },
+                    {
+                        option_name: $('#mult_option2').val(),
+                        option_answer: $('#mult2:checked').val() == null ? 'False' : 'True'
+                    },
+                    {
+                        option_name: $('#mult_option3').val(),
+                        option_answer: $('#mult3:checked').val() == null ? 'False' : 'True'
+                    },
+                    {
+                        option_name: $('#mult_option4').val(),
+                        option_answer: $('#mult4:checked').val() == null ? 'False' : 'True'
+                    }
+                ]
+            } else {
+                optionsToAdd = [
+                    {
+                        option_name: $('#fill_option1').val(),
+                        option_answer: $('#fill1:checked').val() == null ? 'False' : 'True'
+                    },
+                    {
+                        option_name: $('#fill_option2').val(),
+                        option_answer: $('#fill2:checked').val() == null ? 'False' : 'True'
+                    },
+                    {
+                        option_name: $('#fill_option3').val(),
+                        option_answer: $('#fill3:checked').val() == null ? 'False' : 'True'
+                    },
+                ]
             }
 
-            else {
-                const optionsToAdd = {
-                    option1: {option1_name: $('#mult_option1'), option1_answer: $('#mult1').val()==null?'False':'True'},
-                    option2: {option2_name: $('#mult_option2'), option1_answer: $('#mult2').val()==null?'False':'True'},
-                    option3: {option3_name: $('#mult_option3'), option1_answer: $('#mult3').val()==null?'False':'True'},
+            console.log(title);
+            console.log(question);
+            console.log(publish);
+            console.log(question_type);
+            console.log(difficulty);
+            console.log(optionsToAdd);
+
+            $.ajax({
+                method: "POST",
+                url: "{% url 'create_question' lesson.id %}",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                data: {
+                    'title': title,
+                    'question': question,
+                    'published': publish,
+                    'question_type': question_type,
+                    'difficulty': difficulty,
+                    'options': JSON.stringify(optionsToAdd)
+                },
+                success: function (data) {
+                    $('#questionList').html(data)
+                },
+                error: function () {
+                    alert('Cannot add new lesson at this time');
                 }
-            }
+            });
         }
     </script>
     <div class="container">
@@ -107,7 +153,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div id="questionList" class="card">
             <h2 style="padding: 1rem">Questions</h2>
             {% for quiz in quizzes reversed %}
                 <div class="card">

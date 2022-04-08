@@ -3,9 +3,10 @@
 
 {% block body %}
     <style>
-    .modal {
-        max-height: 100% !important; width: 75%;
-    }
+        .modal {
+            max-height: 100% !important;
+            width: 75%;
+        }
     </style>
 
 
@@ -28,8 +29,8 @@
                             <i class="material-icons">edit</i>
                         </button>
                     </a>
-                    <button class="btn-floating red" style="float:right">
-                        <i class="material-icons">check_box</i>
+                    <button class="pub btn-floating red" style="float:right">
+                        <i class="material-icons" id="{{ lesson.id }}">check_box</i>
                     </button>
                 </div>
             {% endfor %}
@@ -106,6 +107,26 @@
 
         $(document).ready(function () {
             $('.modal').modal();
+        });
+
+        $('.pub').on('click', function () {
+            let icon = $(this).find('.material-icons');
+            if (icon.text() == 'check_box') icon.text('check_box_outline_blank');
+            else icon.text('check_box');
+
+            $.ajax({
+                method: "POST",
+                url: "{% url 'publish_lesson' %}",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                data: {
+                    'lesson_id': icon.attr('id')
+                },
+                success: function (data) {
+                },
+                error: function () {
+                    alert('Cannot save published state at this time');
+                }
+            });
         });
     </script>
 {% endblock %}

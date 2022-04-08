@@ -1,13 +1,16 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import Topic, Lesson, LessonQuestion, LessonQuestionOption, UserLessonProgress, LessonComment, LessonCommentReply
+from .models import Topic, Lesson, LessonQuestion, LessonQuestionOption, UserLessonProgress, LessonComment, \
+    LessonCommentReply
 from django.contrib.auth.models import User
 
 from django.http import JsonResponse
 import json, math
 
+
 def home(request):
     return render(request, 'main/home.html')
+
 
 def topics(request):
     if not request.user.is_authenticated:
@@ -17,6 +20,7 @@ def topics(request):
     context = {'topics': all_topics}
     return render(request, 'main/topics.html', context)
 
+
 def lessons(request, lesson_id):
     if not request.user.is_authenticated:
         return render(request, 'main/home.html', {'no_auth_message': True})
@@ -25,6 +29,7 @@ def lessons(request, lesson_id):
     context = {'lesson': lesson}
     return render(request, 'main/lessons.html', context)
 
+
 def lesson_quizzes(request, lesson_id):
     if not request.user.is_authenticated:
         return render(request, 'main/home.html', {'no_auth_message': True})
@@ -32,6 +37,7 @@ def lesson_quizzes(request, lesson_id):
     lesson = Lesson.objects.get(id=lesson_id)
     context = {'lesson': lesson}
     return render(request, 'main/lesson_quizzes.html', context)
+
 
 def instructor(request):
     if request.user.is_superuser:
@@ -42,6 +48,7 @@ def instructor(request):
         return render(request, 'main/admin.html', context)
     else:
         return render(request, 'main/home.html')
+
 
 def create_topic(request):
     if not request.user.is_superuser:
@@ -58,16 +65,17 @@ def create_topic(request):
 
     return render(request, 'main/refreshTemplate/topic_template.html', {'topics': topics})
 
+
 def edit_topic(request, topic_id):
     if not request.user.is_superuser:
         return render(request, 'main/home.html')
 
     topic = Topic.objects.get(id=topic_id)
-    lesson = Lesson.objects.filter(topic = topic_id)
-
+    lesson = Lesson.objects.filter(topic=topic_id)
 
     context = {'topics': topic, 'lessons': lesson}
     return render(request, 'main/add_lesson.html', context)
+
 
 def create_lesson(request):
     if not request.user.is_superuser:
@@ -89,6 +97,7 @@ def create_lesson(request):
         lesson = Lesson.objects.filter(topic=topic)
     return render(request, 'main/refreshTemplate/lesson_template.html', {'lessons': lesson})
 
+
 def edit_lesson(request, lesson_id):
     if not request.user.is_superuser:
         return render(request, 'main/home.html')
@@ -102,22 +111,65 @@ def edit_lesson(request, lesson_id):
         lesson.published = request.POST.get('published')
         lesson.needs_IDE = request.POST.get('ide')
         lesson.save()
-        return render(request, 'main/refreshTemplate/lesson_edit_template.html', {'lesson' : lesson})
+        return render(request, 'main/refreshTemplate/lesson_edit_template.html', {'lesson': lesson})
 
     else:
         lesson = Lesson.objects.get(id=lesson_id)
-        quiz = LessonQuestion.objects.filter(lesson = lesson_id)
+        quiz = LessonQuestion.objects.filter(lesson=lesson_id)
 
         context = {'lesson': lesson, 'quizzes': quiz}
         return render(request, 'main/add_quizzes.html', context)
-#
-# def create_question(request, lesson_id):
-#     if not request.user.is_superuser:
-#         return render(request, 'main/home.html')
-#
-#     if request.method == 'POST':
-#
 
+
+def create_question(request, lesson_id):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        question = request.POST.get('question')
+        published = request.POST.get('published')
+        question_type = request.POST.get('question_type')
+        difficulty = request.POST.get('difficulty')
+        lesson = Lesson.objects.get(id=lesson_id)
+        o = request.POST['options']
+        options = json.loads(o)
+        lesson_question = LessonQuestion(name=title, published=published, question=question,
+                                         question_type=question_type,
+                                         difficulty=difficulty, lesson=lesson)
+        lesson_question.save()
+
+        for option in options:
+            option_name = option['option_name']
+            option_answer = option['option_answer']
+            question_option = LessonQuestionOption(option=option_name, option_correct=option_answer,
+                                                   lesson_question=lesson_question)
+            question_option.save()
+
+        quiz = LessonQuestion.objects.filter(lesson=lesson_id)
+        return render(request, 'main/refreshTemplate/quiz_template.html', {'quizzes': quiz})
+
+def publish_topic(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        topic_id = request.POST.get('topic_id')
+        topic = Topic.objects.get(id=topic_id)
+        topic.published = not topic.published
+        topic.save()
+        return render(request, 'main/admin.html')
+
+def publish_lesson(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        lesson_id = request.POST.get('lesson_id')
+        lesson = Lesson.objects.get(id=lesson_id)
+        lesson.published = not lesson.published
+        lesson.save()
+        return render(request, 'main/admin.html')
 
 def quiz_processing(request):
     if not request.user.is_authenticated:
@@ -152,7 +204,7 @@ def quiz_processing(request):
                         else:
                             number_options_answered_correct += 1
 
-                    total_points +=  number_options_answered_correct / number_correct_options
+                    total_points += number_options_answered_correct / number_correct_options
 
     score = (total_points / number_questions) * 100
     score = math.trunc(score)
@@ -171,7 +223,8 @@ def quiz_processing(request):
 
     return JsonResponse({'score': score, 'best-score': best_score})
 
-#this should throw an exceptions instead of redirect
+
+# this should throw an exceptions instead of redirect
 def create_lesson_comment(request):
     if not request.user.is_authenticated:
         return render(request, 'main/home.html', {'no_auth_message': True})
@@ -188,10 +241,11 @@ def create_lesson_comment(request):
     new_comment.save()
 
     comments = LessonComment.objects.filter(lesson=lesson_foreign_key)
-    return render(request, 'main/refreshTemplate/lesson_comments.html', {'comments':comments})
+    return render(request, 'main/refreshTemplate/lesson_comments.html', {'comments': comments})
 
-#this could be updated to use the delete method
-#this should also throw exceptions instead of delete
+
+# this could be updated to use the delete method
+# this should also throw exceptions instead of delete
 def delete_lesson_comment(request):
     if not request.user.is_authenticated:
         return render(request, 'main/home.html', {'no_auth_message': True})
@@ -202,7 +256,7 @@ def delete_lesson_comment(request):
     comment_id = request.POST.get('comment_id')
     comment = LessonComment.objects.get(id=comment_id)
 
-    #this needs to be tested
+    # this needs to be tested
     if request.user != comment.user:
         return render(request, 'main/home.html')
 
@@ -210,10 +264,10 @@ def delete_lesson_comment(request):
     comment.delete()
 
     comments = LessonComment.objects.filter(lesson=lesson_foreign_key)
-    return render(request, 'main/refreshTemplate/lesson_comments.html', {'comments':comments})
+    return render(request, 'main/refreshTemplate/lesson_comments.html', {'comments': comments})
 
 
-#this should throw an exception instead of redirect
+# this should throw an exception instead of redirect
 def create_lesson_comment_reply(request):
     if not request.user.is_authenticated:
         return render(request, 'main/home.html', {'no_auth_message': True})
@@ -228,9 +282,10 @@ def create_lesson_comment_reply(request):
     new_comment_reply.save()
 
     replies = LessonCommentReply.objects.filter(parent=comment_foreign_key)
-    return render(request, 'main/refreshTemplate/lesson_comment_replies.html', {'replies':replies})
+    return render(request, 'main/refreshTemplate/lesson_comment_replies.html', {'replies': replies})
 
-#this should throw an exception instead of redirect
+
+# this should throw an exception instead of redirect
 def delete_lesson_comment_reply(request):
     if not request.user.is_authenticated:
         return render(request, 'main/home.html', {'no_auth_message': True})
