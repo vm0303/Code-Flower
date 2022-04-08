@@ -205,7 +205,7 @@ def quiz_processing(request):
                         else:
                             number_options_answered_correct += 1
 
-                    total_points += number_options_answered_correct / number_correct_options
+            total_points += number_options_answered_correct / number_correct_options
 
     score = (total_points / number_questions) * 100
     score = math.trunc(score)
