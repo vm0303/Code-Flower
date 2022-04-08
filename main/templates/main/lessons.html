@@ -5,7 +5,7 @@
             <div class="card-content white-text">
                 <span class="card-title">{{ lesson.name }}</span>
                 {% for p in lesson.lessonparagraph_set.all %}
-                    <p>{{ p.paragraph }}</p>
+                    <p style="white-space: pre-wrap">{{ p.paragraph }}</p>
                 {% endfor %}
             </div>
         </div>
@@ -18,7 +18,59 @@
             </iframe>
         </div>
     {% endif %}
-    <div class="container">
+    <div class="container" style="margin-bottom: 2rem">
         <a class="btn" href="{% url 'lesson_quizzes' lesson.id %}">quiz</a>
     </div>
+    <div class="container white" id="comment-section" style="padding: 1rem; margin-bottom: 1rem;">
+        <div class="comment-form-wrapper" style="width: 100%; height: fit-content;">
+            <div class="comment-form" style="width: 95%; height: 5rem; margin:auto">
+                <input type="hidden" value="{{ user.username }}">
+                <input type="hidden" value="{{ lesson.id }}">
+                <textarea placeholder="Comment..." id="comment-body" style="width: 100%; height: 100%; outline: none"></textarea>
+            </div>
+            <button id="submit-comment-form" class="btn-small" style="margin-left:2.5%; margin-top:2px; margin-bottom: .5rem;">Comment</button>
+        </div>
+        <div id="comments-wrapper" style="overflow: scroll; height: 20rem; padding:1rem; border: solid lightslategrey 2px">
+            {% for comment in lesson.lessoncomment_set.all %}
+                <div class="card blue-grey darken-1">
+                    <div class="card-content white-text">
+                        <span class="card-title">{{ comment.user.username }}</span>
+                        <p>{{ comment.body }}</p>
+                    </div>
+                    <div class="card-action">
+                        <span class="white-text">-{{ comment.date_added }}</span>
+                        <a class="btn">replies</a>
+                        {% if user.username == comment.user.username %}
+                            <a class="btn">edit</a>
+                            <a class="btn red">delete</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script type="text/javascript">
+        document.getElementById('submit-comment-form').addEventListener('click', function () {
+            const form = document.querySelector('.comment-form');
+            const inputs = form.querySelectorAll('input');
+            const body = form.querySelector('textarea')
+
+             $.ajax({
+                method: "POST",
+                url: "{% url 'create_lesson_comment' %}",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                data: {
+                    'username': inputs[0].value,
+                    'lesson_id': inputs[1].value,
+                    'body': body.value
+                },
+                success: function (data) {
+                   $('#comments-wrapper').html(data);
+                },
+                error: function () {
+                    alert('Your comment could not be processed at this moment');
+                }
+            });
+        })
+    </script>
 {% endblock %}

@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import Topic, Lesson, LessonQuestion, LessonQuestionOption, UserLessonProgress
+from .models import Topic, Lesson, LessonQuestion, LessonQuestionOption, UserLessonProgress, LessonComment
+from django.contrib.auth.models import User
+
 from django.http import JsonResponse
 import json, math
 
@@ -30,6 +32,84 @@ def lesson_quizzes(request, lesson_id):
     lesson = Lesson.objects.get(id=lesson_id)
     context = {'lesson': lesson}
     return render(request, 'main/lesson_quizzes.html', context)
+
+def instructor(request):
+    if request.user.is_superuser:
+        all_topics = Topic.objects.all()
+        all_lessons = Lesson.objects.all()
+        all_quizzes = LessonQuestion.objects.all()
+        context = {'topics': all_topics, 'lessons': all_lessons, 'quizzes': all_quizzes}
+        return render(request, 'main/admin.html', context)
+    else:
+        return render(request, 'main/home.html')
+
+def create_topic(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        topic = request.POST.get('topic')
+        published = request.POST.get('published')
+        score = request.POST.get('min_passing_score')
+
+        new_topic = Topic(name=topic, published=published, min_passing_score=score)
+        new_topic.save()
+    topics = Topic.objects.all()
+
+    return render(request, 'main/refreshTemplate/topic_template.html', {'topics': topics})
+
+def edit_topic(request, topic_id):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    topic = Topic.objects.get(id=topic_id)
+    lesson = Lesson.objects.filter(topic = topic_id)
+
+
+    context = {'topics': topic, 'lessons': lesson}
+    return render(request, 'main/add_lesson.html', context)
+
+def create_lesson(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        lname = request.POST.get('lname')
+        desc = request.POST.get('desc')
+        minScore = request.POST.get('min_score')
+        quizNum = request.POST.get('quiz_num')
+        published = request.POST.get('published')
+        ide = request.POST.get('ide')
+        topic_id = request.POST.get('topic')
+        topic = Topic.objects.get(id=topic_id)
+
+        new_lesson = Lesson(name=lname, published=published, content_description=desc, needs_IDE=ide, topic=topic,
+                            wanted_number_quiz_questions=quizNum, min_passing_score=minScore)
+        new_lesson.save()
+        lesson = Lesson.objects.filter(topic=topic)
+    return render(request, 'main/refreshTemplate/lesson_template.html', {'lessons': lesson})
+
+def edit_lesson(request, lesson_id):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        lesson = Lesson.objects.get(id=lesson_id)
+        lesson.name = request.POST.get('lname')
+        lesson.content_description = request.POST.get('desc')
+        lesson.min_passing_score = request.POST.get('min_score')
+        lesson.wanted_number_quiz_questions = request.POST.get('quiz_num')
+        lesson.published = request.POST.get('published')
+        lesson.needs_IDE = request.POST.get('ide')
+        lesson.save()
+        return render(request, 'main/refreshTemplate/lesson_edit_template.html', {'lesson' : lesson})
+
+    else:
+        lesson = Lesson.objects.get(id=lesson_id)
+        quiz = LessonQuestion.objects.filter(lesson = lesson_id)
+
+        context = {'lesson': lesson, 'quiz': quiz}
+        return render(request, 'main/add_quizzes.html', context)
 
 def quiz_processing(request):
     if not request.user.is_authenticated:
@@ -82,3 +162,21 @@ def quiz_processing(request):
         user_progress.save()
 
     return JsonResponse({'score': score, 'best-score': best_score})
+
+def create_lesson_comment(request):
+    if not request.user.is_authenticated:
+        return render(request, 'main/home.html', {'no_auth_message': True})
+
+    if request.method != 'POST':
+        return render(request, 'main/home.html')
+
+    username = request.POST.get('username')
+    user = User.objects.get(username=username)
+    lesson_id = request.POST.get('lesson_id')
+    lesson_foreign_key = Lesson.objects.get(id=lesson_id)
+    body = request.POST.get('body')
+    new_comment = LessonComment(user=user, lesson=lesson_foreign_key, body=body)
+    new_comment.save()
+
+    comments = LessonComment.objects.all()
+    return render(request, 'main/refreshTemplate/lesson_comments.html', {'comments':comments})
