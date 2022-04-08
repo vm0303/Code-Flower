@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import Topic, Lesson, LessonQuestion, LessonQuestionOption, UserLessonProgress
+from .models import Topic, Lesson, LessonQuestion, LessonQuestionOption, UserLessonProgress, LessonComment
+from django.contrib.auth.models import User
 
 from django.http import JsonResponse
 import json, math
@@ -162,3 +163,21 @@ def quiz_processing(request):
         user_progress.save()
 
     return JsonResponse({'score': score, 'best-score': best_score})
+
+def create_lesson_comment(request):
+    if not request.user.is_authenticated:
+        return render(request, 'main/home.html', {'no_auth_message': True})
+
+    if request.method != 'POST':
+        return render(request, 'main/home.html')
+
+    username = request.POST.get('username')
+    user = User.objects.get(username=username)
+    lesson_id = request.POST.get('lesson_id')
+    lesson_foreign_key = Lesson.objects.get(id=lesson_id)
+    body = request.POST.get('body')
+    new_comment = LessonComment(user=user, lesson=lesson_foreign_key, body=body)
+    new_comment.save()
+
+    comments = LessonComment.objects.all()
+    return render(request, 'main/refreshTemplate/lesson_comments.html', {'comments':comments})
