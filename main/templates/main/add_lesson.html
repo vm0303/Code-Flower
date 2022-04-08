@@ -63,6 +63,8 @@
         </div>
     </div>
 
+    <div class="card" disabled="none">
+    </div>
 
     <script>
         function add_lesson() {
@@ -122,6 +124,7 @@
                     'lesson_id': icon.attr('id')
                 },
                 success: function (data) {
+                    M.toast({html: 'Publish state saved!', displayLength: '500'})
                 },
                 error: function () {
                     alert('Cannot save published state at this time');

@@ -46,6 +46,7 @@
                     'ide': ide
                 },
                 success: function (data) {
+                    M.toast({html: 'Lesson saved!', displayLength: '500'})
                 },
                 error: function () {
                     alert('Cannot save lesson at this time');
@@ -57,8 +58,6 @@
             const title = $('#qtitle').val();
             const question = $('#qname').val();
             const publish = $('#publish:checked').val() == null ? 'True' : 'False';
-            {#if ($('#publish:checked').val() == null) publish = 'False';#}
-            {#else publish = 'True';#}
             const question_type = $('input[name="qtype"]:checked').val();
             const difficulty = $('#difficulty').val();
             let optionsToAdd;
@@ -85,25 +84,25 @@
                 optionsToAdd = [
                     {
                         option_name: $('#fill_option1').val(),
-                        option_answer: $('#fill1:checked').val() == null ? 'False' : 'True'
+                        option_answer: 'True'
                     },
                     {
                         option_name: $('#fill_option2').val(),
-                        option_answer: $('#fill2:checked').val() == null ? 'False' : 'True'
+                        option_answer: 'True'
                     },
                     {
                         option_name: $('#fill_option3').val(),
-                        option_answer: $('#fill3:checked').val() == null ? 'False' : 'True'
+                        option_answer: 'True'
                     },
                 ]
             }
-
-            console.log(title);
-            console.log(question);
-            console.log(publish);
-            console.log(question_type);
-            console.log(difficulty);
-            console.log(optionsToAdd);
+            {##}
+            {#console.log(title);#}
+            {#console.log(question);#}
+            {#console.log(publish);#}
+            {#console.log(question_type);#}
+            {#console.log(difficulty);#}
+            {#console.log(optionsToAdd);#}
 
             $.ajax({
                 method: "POST",
@@ -119,6 +118,7 @@
                 },
                 success: function (data) {
                     $('#questionList').html(data)
+                    M.toast({html: 'Quiz added!', displayLength: '500'})
                 },
                 error: function () {
                     alert('Cannot add new lesson at this time');
@@ -186,24 +186,19 @@
                 <br>
                 <div>
                     <div id="fillBlank" style="display:none">
-                        <p><i>Press the checkbox near an option if it is correct</i></p>
                         <div>
                             Option 1: <input id="fill_option1" type='text' style="width: 80%"/>
-                            <label><input type="checkbox" id="fill1"/><span></span></label>
                         </div>
                         <br><br>
                         <div>
                             Option 2: <input id="fill_option2" type='text' style="width: 80%"/>
-                            <label><input type="checkbox" id="fill2"/><span></span></label>
                         </div>
                         <br><br>
                         <div>
                             Option 3: <input id="fill_option3" type='text' style="width: 80%"/>
-                            <label><input type="checkbox" id="fill3"/><span></span></label>
                         </div>
                         <br><br>
                     </div>
-
 
                     <div id="multchoice" style="display:none">
                         <p><i>Press the checkbox near an option if it is correct</i></p>
@@ -244,11 +239,10 @@
                     </select>
                     <label>Difficulty rating</label>
                 </div>
-
+                <div style="text-align: right">
+                    <button class="btn" onclick="add_question()">Add</button>
+                </div>
             </form>
-            <div style="text-align: right">
-                <button class="btn" onclick="add_question()">Add</button>
-            </div>
         </div>
     </div>
 {% endblock %}
