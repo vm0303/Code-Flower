@@ -117,8 +117,11 @@
                     'options': JSON.stringify(optionsToAdd)
                 },
                 success: function (data) {
-                    $('#questionList').html(data)
+                    $('#questionList').html(data);
                     M.toast({html: 'Quiz added!', displayLength: '500'})
+                    $.get("{% url 'create_question' lesson.id %}", function (data) {
+                        $("#quiz-form").html(data);
+                    });
                 },
                 error: function () {
                     alert('Cannot add new lesson at this time');
@@ -162,7 +165,7 @@
             {% endfor %}
         </div>
 
-        <div class="white" style="padding: 1rem">
+        <div class="white" style="padding: 1rem" id="quiz-form">
             <form>
                 <label for="qtitle">Title</label>
                 <input type="text" id="qtitle"><br><br>
@@ -239,10 +242,10 @@
                     </select>
                     <label>Difficulty rating</label>
                 </div>
-                <div style="text-align: right">
-                    <button class="btn" onclick="add_question()">Add</button>
-                </div>
             </form>
+            <div style="text-align: right">
+                <button class="btn" onclick="add_question()">Add</button>
+            </div>
         </div>
     </div>
 {% endblock %}
