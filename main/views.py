@@ -107,10 +107,17 @@ def edit_lesson(request, lesson_id):
     else:
         lesson = Lesson.objects.get(id=lesson_id)
         quiz = LessonQuestion.objects.filter(lesson = lesson_id)
-        topic = lesson.topic
 
-        context = {'lesson': lesson, 'quizzes': quiz, 'topic': topic}
+        context = {'lesson': lesson, 'quizzes': quiz}
         return render(request, 'main/add_quizzes.html', context)
+#
+# def create_question(request, lesson_id):
+#     if not request.user.is_superuser:
+#         return render(request, 'main/home.html')
+#
+#     if request.method == 'POST':
+#
+
 
 def quiz_processing(request):
     if not request.user.is_authenticated:

@@ -1,5 +1,5 @@
 {% extends "main/_base.html" %}
-{% block body%}
+{% block body %}
     <div class="container">
         <div class="card black">
             <div class="card-content white-text">
@@ -14,7 +14,7 @@
     {% if lesson.needs_IDE %}
         <div class="container">
             <iframe src="https://trinket.io/embed/python/1be8c8e660?runOption=run"
-                width="100%" height="356" frameborder="0" marginwidth="0" marginheight="0" allowfullscreen>
+                    width="100%" height="356" frameborder="0" marginwidth="0" marginheight="0" allowfullscreen>
             </iframe>
         </div>
     {% endif %}
@@ -26,11 +26,15 @@
             <div class="comment-form" style="width: 95%; height: 5rem; margin:auto">
                 <input type="hidden" value="{{ user.username }}">
                 <input type="hidden" value="{{ lesson.id }}">
-                <textarea placeholder="Comment..." id="comment-body" style="width: 100%; height: 100%; outline: none"></textarea>
+                <textarea placeholder="Comment..." id="comment-body"
+                          style="width: 100%; height: 100%; outline: none"></textarea>
             </div>
-            <button id="submit-comment-form" class="btn-small" style="margin-left:2.5%; margin-top:2px; margin-bottom: .5rem;">Comment</button>
+            <button id="submit-comment-form" class="btn-small"
+                    style="margin-left:2.5%; margin-top:2px; margin-bottom: .5rem;">Comment
+            </button>
         </div>
-        <div id="comments-wrapper" style="overflow: scroll; height: 20rem; padding:1rem; border: solid lightslategrey 2px">
+        <div id="comments-wrapper"
+             style="overflow: scroll; height: 20rem; padding:1rem; border: solid lightslategrey 2px">
             {% for comment in lesson.lessoncomment_set.all %}
                 <div class="card blue-grey darken-1">
                     <div class="card-content white-text">
@@ -55,7 +59,7 @@
             const inputs = form.querySelectorAll('input');
             const body = form.querySelector('textarea')
 
-             $.ajax({
+            $.ajax({
                 method: "POST",
                 url: "{% url 'create_lesson_comment' %}",
                 headers: {'X-CSRFToken': '{{ csrf_token }}'},
@@ -65,7 +69,7 @@
                     'body': body.value
                 },
                 success: function (data) {
-                   $('#comments-wrapper').html(data);
+                    $('#comments-wrapper').html(data);
                 },
                 error: function () {
                     alert('Your comment could not be processed at this moment');

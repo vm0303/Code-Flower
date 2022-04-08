@@ -1,56 +1,63 @@
 {% extends "main/_base.html" %}
 {% load custom_tags %}
 
-{% block body%}
+{% block body %}
+    <style>
+    .modal {
+        max-height: 100% !important; width: 75%;
+    }
+    </style>
+
+
     <div class="container">
-    <div class="topic-title card" style="padding: 1rem; text-align: center">
-        <h2>{{  topics.name }}</h2>
-    </div>
-    <div class="card" style="text-align: center">
-        <h4 style="padding: 1rem">Add new lessons here</h4>
-            <button data-target="add-lesson"  class="btn-floating large modal-trigger">
+        <div class="topic-title card" style="padding: 1rem; text-align: center">
+            <h2>{{ topics.name }}</h2>
+        </div>
+        <div class="card" style="text-align: center">
+            <h4 style="padding: 1rem">Add new lessons here</h4>
+            <button data-target="add-lesson" class="btn-floating large modal-trigger">
                 <i class="large material-icons">add</i>
             </button>
-    </div>
-    <div id="lessonlist">
-        {% for lesson in lessons reversed %}
-            <div class="card">
-                <p style="padding: 1rem; display: inline-block">{{ lesson.name }}</p>
-                <a href="{% url 'edit_lesson' lesson.id %}">
-                    <button class="btn-floating" style="float:right">
-                        <i class="material-icons">edit</i>
+        </div>
+        <div id="lessonlist">
+            {% for lesson in lessons reversed %}
+                <div class="card">
+                    <p style="padding: 1rem; display: inline-block">{{ lesson.name }}</p>
+                    <a href="{% url 'edit_lesson' lesson.id %}">
+                        <button class="btn-floating" style="float:right">
+                            <i class="material-icons">edit</i>
+                        </button>
+                    </a>
+                    <button class="btn-floating red" style="float:right">
+                        <i class="material-icons">check_box</i>
                     </button>
-                </a>
-                <button class="btn-floating red" style="float:right">
-                    <i class="material-icons">check_box</i>
-                </button>
-            </div>
-        {% endfor %}
-    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
     <div id="add-lesson" class="modal">
         <div class="modal-content">
-          <h4>Add a new lesson</h4>
+            <h4>Add a new lesson</h4>
             <label for="lname">Set Lesson Name:</label>
-          <input type="text" id="lname" name="lname"><br><br>
-          <label for="publish">
+            <input type="text" id="lname" name="lname"><br><br>
+            <label for="publish">
                 <input type="checkbox" id="publish" name="accept" value="true"/>
                 <span>Publish</span>
             </label>
-          <input type="checkbox" id="publish" name="publish"><br><br>
-            <label for="Cdesc">Set Lesson Description:</label>
-            <textarea  rows="4" cols="50" name="Cdesc" id="desc"></textarea><br>
-            <label for="min-score" style="display: block" >Number of quizzes</label>
-            <input type="number" id="quiz-num" style="width: 25%"  min="0" max="100"><br><br>
-            <label for="min-score" style="display: block" >Minimum passing score</label>
-            <input type="number" id="min-score" style="width: 25%"  min="0" max="100"><br><br>
-          <label for="ide">
+            <input type="checkbox" id="publish" name="publish"><br><br>
+            <label for="desc">Set Lesson Description:</label>
+            <textarea class="materialize-textarea" style="height: 19rem" id="desc"></textarea><br>
+            <label for="min-score" style="display: block">Number of questions</label>
+            <input type="number" id="quiz-num" style="width: 25%" min="0" max="100"><br><br>
+            <label for="min-score" style="display: block">Minimum passing score</label>
+            <input type="number" id="min-score" style="width: 25%" min="0" max="100"><br><br>
+            <label for="ide">
                 <input type="checkbox" id="ide" name="accept" value="true"/>
                 <span>IDE</span>
             </label>
         </div>
         <div class="modal-footer">
-            <button class="btn modal-close red" >Cancel</button>
+            <button class="btn modal-close red">Cancel</button>
             <button class="btn modal-close" onclick="add_lesson()">Add</button>
         </div>
     </div>
@@ -65,10 +72,10 @@
             let publish;
             let ide;
 
-            if($('#publish:checked').val() == null) publish = 'False';
+            if ($('#publish:checked').val() == null) publish = 'False';
             else publish = 'True';
 
-            if($('#ide:checked').val() == null) ide = 'False';
+            if ($('#ide:checked').val() == null) ide = 'False';
             else ide = 'True';
 
             $.ajax({
@@ -76,7 +83,7 @@
                 url: "{% url 'create_lesson' %}",
                 headers: {'X-CSRFToken': '{{ csrf_token }}'},
                 data: {
-                    'topic' : {{ topics.id }},
+                    'topic': {{ topics.id }},
                     'lname': lname,
                     'desc': desc,
                     'quiz_num': quiz_num,
@@ -93,11 +100,11 @@
             });
         }
 
-        $(document).ready(function(){
+        $(document).ready(function () {
             $('.collapsible').collapsible();
         });
 
-        $(document).ready(function(){
+        $(document).ready(function () {
             $('.modal').modal();
         });
     </script>
