@@ -42,7 +42,7 @@
                 </div>
                 <div class="added card">
                     <i class="large material-icons">code</i>
-                    <p>Quizzes added</p>
+                    <p>Questions added</p>
                     <button class="btn modal-trigger" id="added quizzes" data-target="all-quizzes">View</button>
                 </div>
             </div>
@@ -180,6 +180,7 @@
                     'topic_id': icon.attr('id')
                 },
                 success: function (data) {
+                    M.toast({html: 'Publish state saved!', displayLength: '500'})
                 },
                 error: function () {
                     alert('Cannot save published state at this time');

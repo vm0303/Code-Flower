@@ -150,6 +150,9 @@ def create_question(request, lesson_id):
         quiz = LessonQuestion.objects.filter(lesson=lesson_id)
         return render(request, 'main/refreshTemplate/quiz_template.html', {'quizzes': quiz})
 
+    if request.method == 'GET':
+        return render(request, 'main/refreshTemplate/quiz_form.html')
+
 def publish_topic(request):
     if not request.user.is_superuser:
         return render(request, 'main/home.html')
