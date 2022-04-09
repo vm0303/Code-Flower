@@ -1,0 +1,8 @@
+<div class="card">
+    <h2 style="padding: 1rem">Questions</h2>
+    {% for quiz in quizzes reversed %}
+        <div class="card">
+            <p style="padding: 1rem; display: inline-block">{{ quiz.name }}</p>
+        </div>
+    {% endfor %}
+</div>
