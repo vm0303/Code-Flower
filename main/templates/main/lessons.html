@@ -30,7 +30,7 @@
             </div>
             <button id="submit-comment-form" class="btn-small" style="margin-left:2.5%; margin-top:2px; margin-bottom: .5rem;">Comment</button>
         </div>
-        <div id="comments-wrapper" style="overflow: scroll; height: 20rem; padding:1rem;">
+        <div id="comments-wrapper" style="overflow: scroll; height: fit-content; max-height: 30rem; padding:1rem;">
             {% for comment in lesson.lessoncomment_set.all %}
                 <div class="card blue-grey darken-1">
                     <div class="card-content white-text">
@@ -51,7 +51,7 @@
                             <textarea placeholder="Reply..." style="width: 100%; height: 100%; outline: none"></textarea>
                         </div>
                         <button class="btn-small submit-reply-form" data-parent-id="{{ comment.id }}" style="margin-left:2.5%; margin-top:2px; margin-bottom: .5rem;">Reply</button>
-                        <div id="replies-{{ comment.id }}" style="overflow: scroll; height: 20vh; padding: .2rem;">
+                        <div id="replies-{{ comment.id }}" style="overflow: scroll; height: fit-content; max-height: 20rem; padding: .2rem;">
                             {% for reply in comment.lessoncommentreply_set.all %}
                                 <div class="card blue-grey darken-1">
                                     <div class="card-content white-text">
