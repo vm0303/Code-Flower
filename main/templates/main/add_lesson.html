@@ -29,8 +29,15 @@
                             <i class="material-icons">edit</i>
                         </button>
                     </a>
-                    <button class="pub btn-floating red" style="float:right">
-                        <i class="material-icons" id="{{ lesson.id }}">check_box</i>
+                    <button class="pub btn-floating" style="float:right">
+                        {% if lesson.published %}
+                            <i class="published material-icons" id="{{ lesson.id }}">check_box</i>
+                        {% else %}
+                            <i class="published material-icons" id="{{ lesson.id }}">check_box_outline_blank</i>
+                        {% endif %}
+                    </button>
+                    <button class="btn-floating red" style="float:right" onclick="deleteLesson({{ lesson.id }})">
+                        <i class="material-icons">delete</i>
                     </button>
                 </div>
             {% endfor %}
@@ -112,7 +119,7 @@
         });
 
         $('.pub').on('click', function () {
-            let icon = $(this).find('.material-icons');
+            let icon = $(this).find('.published');
             if (icon.text() == 'check_box') icon.text('check_box_outline_blank');
             else icon.text('check_box');
 
@@ -131,6 +138,23 @@
                 }
             });
         });
+
+        function deleteLesson(lesson_id) {
+            $.ajax({
+                method: "POST",
+                url: "{% url 'delete_lesson' %}",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                data: {
+                    'lesson_id': lesson_id
+                },
+                success: function (data) {
+                    $('#lessonlist').html(data);
+                },
+                error: function () {
+                    alert('Cannot delete lesson at this time');
+                }
+            });
+        }
     </script>
 {% endblock %}
 

@@ -3,13 +3,15 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('instructor',views.instructor, name='instructor'),
+    path('instructor', views.instructor, name='instructor'),
     path('topics', views.topics, name='topics'),
     path('add/topics', views.create_topic, name='create_topic'),
     path('edit/topic/(<topic_id>\d+)', views.edit_topic, name='edit_topic'),
     path('edit/topic/publish', views.publish_topic, name='publish_topic'),
+    path('delete/topic', views.delete_topic, name='delete_topic'),
     path('add/lessons', views.create_lesson, name='create_lesson'),
     path('edit/lesson/(<lesson_id>\d+)', views.edit_lesson, name='edit_lesson'),
+    path('delete/lesson', views.delete_lesson, name='delete_lesson'),
     path('edit/lesson/publish', views.publish_lesson, name='publish_lesson'),
     path('add/questions/(<lesson_id>\d+)', views.create_question, name='create_question'),
     path('lessons/(<lesson_id>\d+)', views.lessons, name='lessons'),

@@ -1,13 +1,42 @@
 {% for topic in topics reversed %}
-            <div class="card">
-                <p style="padding: 1rem; display: inline-block">{{ topic.name }}</p>
-                <a href="{% url 'edit_topic' topic.id %}">
-                    <button class="btn-floating" style="float:right">
-                        <i class="material-icons">edit</i>
-                    </button>
-                </a>
-                <button class="btn-floating red" style="float:right">
-                    <i class="material-icons">check_box</i>
-                </button>
-            </div>
+    <div class="card">
+        <p style="padding: 1rem; display: inline-block">{{ topic.name }}</p>
+        <a href="{% url 'edit_topic' topic.id %}">
+            <button class="btn-floating" style="float:right">
+                <i class="material-icons">edit</i>
+            </button>
+        </a>
+        <button class="pub btn-floating" style="float:right">
+            {% if topic.published %}
+                <i class="published material-icons" id="{{ topic.id }}">check_box</i>
+            {% else %}
+                <i class="published material-icons" id="{{ topic.id }}">check_box_outline_blank</i>
+            {% endif %}
+        </button>
+        <button class="btn-floating red" style="float:right" onclick="deleteTopic({{ topic.id }})">
+            <i class="material-icons">delete</i>
+        </button>
+    </div>
 {% endfor %}
+<script>
+    $('.pub').on('click', function () {
+        let icon = $(this).find('.published');
+        if (icon.text() == 'check_box') icon.text('check_box_outline_blank');
+        else icon.text('check_box');
+        console.log(icon.attr('id'))
+        $.ajax({
+            method: "POST",
+            url: "{% url 'publish_topic' %}",
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            data: {
+                'topic_id': icon.attr('id')
+            },
+            success: function (data) {
+                M.toast({html: 'Publish state saved!', displayLength: '500'})
+            },
+            error: function () {
+                alert('Cannot save published state at this time');
+            }
+        });
+    });
+</script>
