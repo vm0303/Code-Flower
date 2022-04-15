@@ -2,7 +2,16 @@
 {% load custom_tags %}
 
 {% block body %}
+    <style>
+        .heading {
+            background-color: black;
+            color: white;
+        }
+    </style>
     <script>
+        $(document).ready(function () {
+            $('.collapsible').collapsible();
+        });
 
         $(document).ready(function () {
             $('select').formSelect();
@@ -96,13 +105,6 @@
                     },
                 ]
             }
-            {##}
-            {#console.log(title);#}
-            {#console.log(question);#}
-            {#console.log(publish);#}
-            {#console.log(question_type);#}
-            {#console.log(difficulty);#}
-            {#console.log(optionsToAdd);#}
 
             $.ajax({
                 method: "POST",
@@ -130,41 +132,52 @@
         }
     </script>
     <div class="container">
-        <div class="card" id="edit-form" style="padding: 1rem">
-            <h4>{{ lesson.topic.name }}</h4>
-            <label for="lname">Set Lesson Name</label>
-            <input type="text" id="lname" name="lname" value="{{ lesson.name }}"><br><br>
-            <label for="publish">
-                <input type="checkbox" id="publish" name="accept" value="true"/>
-                <span>Publish</span>
-            </label><br><br>
-            <label for="Cdesc">Set Lesson Description</label>
-            <textarea class="materialize-textarea" style="height: 10vw;" id="Cdesc"
-                      id="desc">{{ lesson.content_description }}</textarea><br>
-            <label for="min-score" style="display: block">Number of questions</label>
-            <input type="number" id="quiz-num" style="width: 25%" value="{{ lesson.wanted_number_quiz_questions }}"
-                   min="0" max="100"><br><br>
-            <label for="min-score" style="display: block">Minimum passing score</label>
-            <input type="number" id="min-score" style="width: 25%" value="{{ lesson.min_passing_score }}" min="0"
-                   max="100"><br><br>
-            <label for="ide">
-                <input type="checkbox" id="ide" name="accept" value="true"/>
-                <span>IDE</span>
-            </label>
-            <div style="text-align: right">
-                <button class="btn" onclick="edit_lesson()">Save</button>
-            </div>
-        </div>
-
+        <ul class="collapsible popout">
+            <li>
+                <div class="collapsible-header heading">
+                    <div>
+                        <h4 style="display: inline">Edit Lesson</h4>
+                    </div>
+                </div>
+                <div class="collapsible-body card" id="edit-form">
+                    <label for="lname">Set Lesson Name</label>
+                    <input type="text" id="lname" name="lname" value="{{ lesson.name }}"><br><br>
+                    <label for="publish">
+                        <input type="checkbox" id="publish" name="accept" value="true"/>
+                        <span>Publish</span>
+                    </label><br><br>
+                    <label for="Cdesc">Set Lesson Description</label>
+                    <textarea class="materialize-textarea" style="height: 10vw;"
+                              id="desc"
+                              value="{{ lesson.content_description }}">{{ lesson.content_description }}</textarea><br>
+                    <label for="min-score" style="display: block">Number of questions</label>
+                    <input type="number" id="quiz-num" style="width: 25%"
+                           value="{{ lesson.wanted_number_quiz_questions }}"
+                           min="0" max="100"><br><br>
+                    <label for="min-score" style="display: block">Minimum passing score</label>
+                    <input type="number" id="min-score" style="width: 25%" value="{{ lesson.min_passing_score }}"
+                           min="0"
+                           max="100"><br><br>
+                    <label for="ide">
+                        <input type="checkbox" id="ide" name="accept" value="true"/>
+                        <span>IDE</span>
+                    </label>
+                    <div style="text-align: right">
+                        <button class="btn" onclick="edit_lesson()">Save</button>
+                    </div>
+                </div>
+            </li>
+        </ul>
         <div id="questionList" class="card">
-            <h2 style="padding: 1rem">Questions</h2>
+            <h3 class="heading" style="padding: 1rem">Questions</h3>
             {% for quiz in quizzes reversed %}
-                <div class="card">
+                <div>
                     <p style="padding: 1rem; display: inline-block">{{ quiz.name }}</p>
                 </div>
             {% endfor %}
         </div>
 
+        <h3 class="heading" style="padding: 1rem">Add questions</h3>
         <div class="white" style="padding: 1rem" id="quiz-form">
             <form>
                 <label for="qtitle">Title</label>

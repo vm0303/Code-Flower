@@ -77,6 +77,17 @@ def edit_topic(request, topic_id):
     return render(request, 'main/add_lesson.html', context)
 
 
+def delete_topic(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+    if request.method == 'POST':
+        topic_id = request.POST.get('topic_id')
+        topic = Topic.objects.get(id=topic_id)
+        topic.delete();
+        t = Topic.objects.all()
+        return render(request, 'main/refreshTemplate/topic_template.html', {'topics': t})
+
+
 def create_lesson(request):
     if not request.user.is_superuser:
         return render(request, 'main/home.html')
@@ -121,6 +132,18 @@ def edit_lesson(request, lesson_id):
         return render(request, 'main/add_quizzes.html', context)
 
 
+def delete_lesson(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        lesson_id = request.POST.get('lesson_id')
+        lesson = Lesson.objects.get(id=lesson_id)
+        lesson.delete()
+        l = Lesson.objects.all()
+        return render(request, 'main/refreshTemplate/lesson_template.html', {'lessons': l})
+
+
 def create_question(request, lesson_id):
     if not request.user.is_superuser:
         return render(request, 'main/home.html')
@@ -153,6 +176,7 @@ def create_question(request, lesson_id):
     if request.method == 'GET':
         return render(request, 'main/refreshTemplate/quiz_form.html')
 
+
 def publish_topic(request):
     if not request.user.is_superuser:
         return render(request, 'main/home.html')
@@ -164,6 +188,7 @@ def publish_topic(request):
         topic.save()
         return render(request, 'main/admin.html')
 
+
 def publish_lesson(request):
     if not request.user.is_superuser:
         return render(request, 'main/home.html')
@@ -174,6 +199,7 @@ def publish_lesson(request):
         lesson.published = not lesson.published
         lesson.save()
         return render(request, 'main/admin.html')
+
 
 def quiz_processing(request):
     if not request.user.is_authenticated:

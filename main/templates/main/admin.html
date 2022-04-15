@@ -62,8 +62,15 @@
                             <i class="material-icons">edit</i>
                         </button>
                     </a>
-                    <button class="pub btn-floating red" style="float:right">
-                        <i class="material-icons" id="{{ topic.id }}">check_box</i>
+                    <button class="pub btn-floating" style="float:right">
+                        {% if topic.published %}
+                            <i class="published material-icons" id="{{ topic.id }}">check_box</i>
+                        {% else %}
+                            <i class="published material-icons" id="{{ topic.id }}">check_box_outline_blank</i>
+                        {% endif %}
+                    </button>
+                    <button class="btn-floating red" style="float:right" onclick="deleteTopic({{ topic.id }})">
+                        <i class="material-icons">delete</i>
                     </button>
                 </div>
             {% endfor %}
@@ -168,7 +175,7 @@
         });
 
         $('.pub').on('click', function () {
-            let icon = $(this).find('.material-icons');
+            let icon = $(this).find('.published');
             if (icon.text() == 'check_box') icon.text('check_box_outline_blank');
             else icon.text('check_box');
             console.log(icon.attr('id'))
@@ -188,5 +195,21 @@
             });
         });
 
+        function deleteTopic(topic_id) {
+            $.ajax({
+                method: "POST",
+                url: "{% url 'delete_topic' %}",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                data: {
+                    'topic_id': topic_id,
+                },
+                success: function (data) {
+                    $('#topics-data').html(data);
+                },
+                error: function () {
+                    alert('Cannot delete topic at this time');
+                }
+            });
+        }
     </script>
 {% endblock %}
