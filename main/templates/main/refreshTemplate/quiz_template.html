@@ -2,5 +2,39 @@
 {% for quiz in quizzes reversed %}
     <div>
         <p style="padding: 1rem; display: inline-block">{{ quiz.name }}</p>
+        <button class="pub btn-floating" style="float:right">
+            {% if quiz.published %}
+                <i class="published material-icons" id="{{ quiz.id }}">check_box</i>
+            {% else %}
+                <i class="published material-icons" id="{{ quiz.id }}">check_box_outline_blank</i>
+            {% endif %}
+        </button>
+        <button class="btn-floating red" style="float:right" onclick="deleteQuiz({{ quiz.id }})">
+            <i class="material-icons">delete</i>
+        </button>
     </div>
+
 {% endfor %}
+
+<script>
+    $('.pub').on('click', function () {
+        let icon = $(this).find('.published');
+        if (icon.text() == 'check_box') icon.text('check_box_outline_blank');
+        else icon.text('check_box');
+
+        $.ajax({
+            method: "POST",
+            url: "{% url 'publish_question' %}",
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            data: {
+                'quiz_id': icon.attr('id')
+            },
+            success: function (data) {
+                M.toast({html: 'Publish state saved!', displayLength: '500'})
+            },
+            error: function () {
+                alert('Cannot save published state at this time');
+            }
+        });
+    });
+</script>

@@ -99,7 +99,7 @@
             <h4>All topics</h4>
             <hr>
             {% for topic in topics reversed %}
-                <div class="card">
+                <div>
                     <p style="padding: 1rem; display: inline-block">{{ topic.name }}</p>
                 </div>
             {% endfor %}
@@ -114,7 +114,7 @@
             <h4>All lessons</h4>
             <hr>
             {% for lesson in lessons reversed %}
-                <div class="card">
+                <div>
                     <p style="padding: 1rem; display: inline-block">{{ lesson.name }}</p>
                 </div>
             {% endfor %}
@@ -129,7 +129,7 @@
             <h4>All quizzes</h4>
             <hr>
             {% for quiz in quizzes reversed %}
-                <div class="card">
+                <div>
                     <p style="padding: 1rem; display: inline-block">{{ quiz.name }}</p>
                 </div>
             {% endfor %}
@@ -196,20 +196,22 @@
         });
 
         function deleteTopic(topic_id) {
-            $.ajax({
-                method: "POST",
-                url: "{% url 'delete_topic' %}",
-                headers: {'X-CSRFToken': '{{ csrf_token }}'},
-                data: {
-                    'topic_id': topic_id,
-                },
-                success: function (data) {
-                    $('#topics-data').html(data);
-                },
-                error: function () {
-                    alert('Cannot delete topic at this time');
-                }
-            });
+            if (confirm('Deleting this topic will delete all lessons and questions in it. Are you sure?')) {
+                $.ajax({
+                    method: "POST",
+                    url: "{% url 'delete_topic' %}",
+                    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                    data: {
+                        'topic_id': topic_id,
+                    },
+                    success: function (data) {
+                        $('#topics-data').html(data);
+                    },
+                    error: function () {
+                        alert('Cannot delete topic at this time');
+                    }
+                });
+            }
         }
     </script>
 {% endblock %}

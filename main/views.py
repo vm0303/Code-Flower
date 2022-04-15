@@ -143,7 +143,6 @@ def delete_lesson(request):
         l = Lesson.objects.all()
         return render(request, 'main/refreshTemplate/lesson_template.html', {'lessons': l})
 
-
 def create_question(request, lesson_id):
     if not request.user.is_superuser:
         return render(request, 'main/home.html')
@@ -176,6 +175,17 @@ def create_question(request, lesson_id):
     if request.method == 'GET':
         return render(request, 'main/refreshTemplate/quiz_form.html')
 
+def delete_question(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        question_id = request.POST.get('quiz_id')
+        question = LessonQuestion.objects.get(id=question_id)
+        question.delete()
+        q = LessonQuestion.objects.all()
+        return render(request, 'main/refreshTemplate/quiz_template.html', {'quizzes': q})
+
 
 def publish_topic(request):
     if not request.user.is_superuser:
@@ -200,6 +210,16 @@ def publish_lesson(request):
         lesson.save()
         return render(request, 'main/admin.html')
 
+def publish_question(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        question_id = request.POST.get('quiz_id')
+        question = LessonQuestion.objects.get(id=question_id)
+        question.published = not question.published
+        question.save()
+        return render(request, 'main/admin.html')
 
 def quiz_processing(request):
     if not request.user.is_authenticated:

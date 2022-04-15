@@ -2,7 +2,20 @@
 {% load custom_tags %}
 
 {% block body %}
+
+
     <style>
+        .noselect {
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Old versions of Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
+            /* Non-prefixed version, currently
+                                             supported by Chrome, Edge, Opera and Firefox */
+        }
+
         .heading {
             background-color: black;
             color: white;
@@ -130,20 +143,41 @@
                 }
             });
         }
+
+        function deleteQuiz(quiz_id) {
+            $.ajax({
+                method: "POST",
+                url: "{% url 'delete_question' %}",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                data: {
+                    'quiz_id': quiz_id
+                },
+                success: function (data) {
+                    $('#questionList').html(data);
+                },
+                error: function () {
+                    alert('Cannot delete lesson at this time');
+                }
+            });
+        }
     </script>
     <div class="container">
         <ul class="collapsible popout">
             <li>
-                <div class="collapsible-header heading">
+                <div class="collapsible-header heading noselect">
                     <div>
-                        <h4 style="display: inline">Edit Lesson</h4>
+                        <h4 style="display: inline" tabindex="-1">Edit Lesson</h4>
                     </div>
                 </div>
                 <div class="collapsible-body card" id="edit-form">
                     <label for="lname">Set Lesson Name</label>
                     <input type="text" id="lname" name="lname" value="{{ lesson.name }}"><br><br>
                     <label for="publish">
-                        <input type="checkbox" id="publish" name="accept" value="true"/>
+                        {% if lesson.published %}
+                            <input type="checkbox" id="publish" checked="checked"/>
+                        {% else %}
+                            <input type="checkbox" id="publish" value="true"/>
+                        {% endif %}
                         <span>Publish</span>
                     </label><br><br>
                     <label for="Cdesc">Set Lesson Description</label>
@@ -159,7 +193,11 @@
                            min="0"
                            max="100"><br><br>
                     <label for="ide">
-                        <input type="checkbox" id="ide" name="accept" value="true"/>
+                        {% if lesson.needs_IDE %}
+                            <input type="checkbox" id="ide" checked="checked"/>
+                        {% else %}
+                            <input type="checkbox" id="ide" value="true"/>
+                        {% endif %}
                         <span>IDE</span>
                     </label>
                     <div style="text-align: right">
@@ -173,6 +211,16 @@
             {% for quiz in quizzes reversed %}
                 <div>
                     <p style="padding: 1rem; display: inline-block">{{ quiz.name }}</p>
+                    <button class="pub btn-floating" style="float:right">
+                        {% if quiz.published %}
+                            <i class="published material-icons" id="{{ quiz.id }}">check_box</i>
+                        {% else %}
+                            <i class="published material-icons" id="{{ quiz.id }}">check_box_outline_blank</i>
+                        {% endif %}
+                    </button>
+                    <button class="btn-floating red" style="float:right" onclick="deleteQuiz({{ quiz.id }})">
+                        <i class="material-icons">delete</i>
+                    </button>
                 </div>
             {% endfor %}
         </div>
@@ -185,7 +233,7 @@
                 <label for="qname">Question</label>
                 <textarea id="qname" class="materialize-textarea" style="height: 10vw;"></textarea><br><br>
                 <label for="publish2">
-                    <input type="checkbox" id="publish2" name="accept" value="true"/>
+                    <input type="checkbox" id="publish2" value="true"/>
                     <span>Publish</span>
                 </label>
                 <p>Question type: </p>
@@ -261,4 +309,27 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $('.pub').on('click', function () {
+            let icon = $(this).find('.published');
+            if (icon.text() == 'check_box') icon.text('check_box_outline_blank');
+            else icon.text('check_box');
+
+            $.ajax({
+                method: "POST",
+                url: "{% url 'publish_question' %}",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                data: {
+                    'quiz_id': icon.attr('id')
+                },
+                success: function (data) {
+                    M.toast({html: 'Publish state saved!', displayLength: '500'})
+                },
+                error: function () {
+                    alert('Cannot save published state at this time');
+                }
+            });
+        });
+    </script>
 {% endblock %}
