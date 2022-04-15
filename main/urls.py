@@ -20,5 +20,6 @@ urlpatterns = [
     path('lesson/submit/comment', views.create_lesson_comment, name='create_lesson_comment'),
     path('lesson/delete/comment', views.delete_lesson_comment, name='delete_lesson_comment'),
     path('lesson/submit/comment/reply', views.create_lesson_comment_reply, name='create_lesson_comment_reply'),
-    path('lesson/delete/comment/reply', views.delete_lesson_comment_reply, name='delete_lesson_comment_reply')
+    path('lesson/delete/comment/reply', views.delete_lesson_comment_reply, name='delete_lesson_comment_reply'),
+    path('home/instructorRequest', views.instructor_request, name='instructor_request')
 ]

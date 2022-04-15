@@ -334,3 +334,20 @@ def delete_lesson_comment_reply(request):
 
     replies = LessonCommentReply.objects.filter(parent=comment_foreign_key)
     return render(request, 'main/refreshTemplate/lesson_comment_replies.html', {'replies': replies})
+
+
+# this should throw an exception instead of redirect
+def instructor_request(request):
+    if not request.user.is_authenticated:
+        return render(request, 'main/home.html', {'no_auth_message': True})
+
+    if request.method != 'POST':
+        return render(request, 'main/home.html')
+
+    email = request.POST.get('email')
+    reason = request.POST.get('reason')
+
+    new_request = InstructorRequest(user=request.user, email=email, reason=reason, status="pending")
+    new_request.save()
+
+    return render(request, 'main/refreshTemplate/instructorRequest.html')

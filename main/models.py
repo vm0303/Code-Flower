@@ -116,3 +116,18 @@ class LessonCommentReply(models.Model):
 
     def __str__(self):
         return self.parent.body
+
+
+class InstructorRequest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, unique=True,)
+    email = models.CharField(max_length=300)
+    reason = models.TextField()
+    STATS = (
+        ("pending", 'pending'),
+        ("denied", "denied"),
+        ("accepted", "accepted")
+    )
+    status = models.CharField(max_length=20, choices=STATS)
+
+    def __str__(self):
+        return self.email
