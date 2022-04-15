@@ -9,7 +9,6 @@
         }
     </style>
 
-
     <div class="container">
         <div class="topic-title card" style="padding: 1rem; text-align: center">
             <h2>{{ topics.name }}</h2>
@@ -140,20 +139,22 @@
         });
 
         function deleteLesson(lesson_id) {
-            $.ajax({
-                method: "POST",
-                url: "{% url 'delete_lesson' %}",
-                headers: {'X-CSRFToken': '{{ csrf_token }}'},
-                data: {
-                    'lesson_id': lesson_id
-                },
-                success: function (data) {
-                    $('#lessonlist').html(data);
-                },
-                error: function () {
-                    alert('Cannot delete lesson at this time');
-                }
-            });
+            if (confirm('Deleting this topic will delete all lessons in it. Are you sure?')) {
+                $.ajax({
+                    method: "POST",
+                    url: "{% url 'delete_lesson' %}",
+                    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                    data: {
+                        'lesson_id': lesson_id
+                    },
+                    success: function (data) {
+                        $('#lessonlist').html(data);
+                    },
+                    error: function () {
+                        alert('Cannot delete lesson at this time');
+                    }
+                });
+            }
         }
     </script>
 {% endblock %}
