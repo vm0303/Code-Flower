@@ -1,0 +1,19 @@
+{% load custom_tags %}
+{% if user.is_authenticated %}
+    {% get_instructor_request_status user.username as request_status %}
+    {% if request_status == "dne"%}
+         <div class="container white" style="padding: 1.5rem; margin-top: 1rem; margin-bottom: 1rem">
+             <p class="flow-text" style="width: 95%; margin: auto">Want to be an instructor? Sign up below</p>
+            <input id="preferred-name" type="text" placeholder="Preferred name" style="display: block; width: 95%; margin: auto">
+            <input id="user-email" type="email" placeholder="Email" style="display: block; width: 95%; margin: auto">
+            <textarea id="reason-instructor" class="materialize-textarea" placeholder="Please tell us why you would make a good instructor" style="display:block; width: 95%; margin: 1.5rem auto 1.5rem auto"></textarea>
+            <button onclick="submitInstructorRequest()" style="margin-left:2.5%" class="btn">submit</button>
+        </div>
+    {% elif request_status == "pending"  %}
+        <div class="container white status-message">You have requested to be an instructor and your status is pending.</div>
+    {% elif request_status == "denied" %}
+        <div class="container white status-message">You are request to be an instructor has been denied.</div>
+    {% else %}
+        <div class="container white status-message">You request to be an instructor has been accepted.</div>
+    {% endif %}
+{% endif %}

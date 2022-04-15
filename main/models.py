@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import CheckConstraint, Q
 
+
 class Topic(models.Model):
     name = models.CharField(unique=True, max_length=300)
     published = models.BooleanField()
@@ -19,6 +20,7 @@ class Topic(models.Model):
                 name='topic_min_passing_score_range'
             )
         ]
+
 
 class Lesson(models.Model):
     name = models.CharField(unique=True, max_length=300)
@@ -41,12 +43,14 @@ class Lesson(models.Model):
             )
         ]
 
+
 class LessonParagraph(models.Model):
     paragraph = models.TextField()
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.paragraph
+
 
 class LessonQuestion(models.Model):
     name = models.CharField(max_length=300)
@@ -81,6 +85,7 @@ class LessonQuestion(models.Model):
             models.UniqueConstraint(fields=['name', 'lesson'], name='combination of lesson and name is unique')
         ]
 
+
 class LessonQuestionOption(models.Model):
     option = models.TextField()
     option_correct = models.BooleanField()
@@ -88,6 +93,7 @@ class LessonQuestionOption(models.Model):
 
     def __str__(self):
         return self.option
+
 
 class UserLessonProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -99,6 +105,7 @@ class UserLessonProgress(models.Model):
             models.UniqueConstraint(fields=['user', 'lesson'], name='combination of lesson and user is unique')
         ]
 
+
 class LessonComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
@@ -107,6 +114,7 @@ class LessonComment(models.Model):
 
     def __str__(self):
         return self.lesson.name
+
 
 class LessonCommentReply(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -119,8 +127,9 @@ class LessonCommentReply(models.Model):
 
 
 class InstructorRequest(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, unique=True,)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, unique=True, )
     email = models.CharField(max_length=300)
+    pref_name = models.CharField(max_length=300)
     reason = models.TextField()
     STATS = (
         ("pending", 'pending'),
@@ -128,6 +137,7 @@ class InstructorRequest(models.Model):
         ("accepted", "accepted")
     )
     status = models.CharField(max_length=20, choices=STATS)
+    date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.email
+        return self.user.username

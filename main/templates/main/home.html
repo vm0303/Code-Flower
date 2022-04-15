@@ -1,37 +1,53 @@
 {% extends "main/_base.html" %}
 {% load custom_tags %}
-{% block body%}
+{% block body %}
     <style>
         .status-message {
-            margin: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+        }
+
+        #instructor-request-wrapper {
+            width: 100%;
+            height: fit-content;
         }
     </style>
 
     {% if no_auth_message %}
-        <div class="container white flow-text z-depth-5 align-center" style="margin-top:1rem; margin-bottom: 1rem; padding: 1rem">
+        <div class="container white flow-text z-depth-5 align-center"
+             style="margin-top:1rem; margin-bottom: 1rem; padding: 1rem">
             You must login to access content outside of the home page.
         </div>
     {% endif %}
-    {% if user.is_authenticated %}
-        {% get_instructor_request_status user.username as request_status %}
 
-        {% if request_status == "dne"%}
-             <div class="container white" style="padding: 1.5rem; margin-top: 1rem; margin-bottom: 1rem">
-             <p class="flow-text" style="width: 95%; margin: auto">Want to be an instructor? Sign up below</p>
-            <input type="text" placeholder="Preferred name" style="display: block; width: 95%; margin: auto">
-            <input type="email" placeholder="Email" style="display: block; width: 95%; margin: auto">
-            <textarea class="materialize-textarea" placeholder="Please tell us why you would make a good instructor" style="display:block; width: 95%; margin: 1.5rem auto 1.5rem auto"></textarea>
-            <button style="margin-left:2.5%" class="btn">submit</button>
-        {% elif request_status == "pending"  %}
-            <div class="container white status-message">You have requested to be an instructor and you status is pending</div>
-        {% elif request_status == "denied" %}
-            <div class="container white status-message">You are request to be an instructor has been denied</div>
-        {% else %}
-            <div class="container white status-message">You request to be an instructor has been accepted</div>
+    <div id="instructor-request-wrapper">
+        {% if user.is_authenticated %}
+            {% get_instructor_request_status user.username as request_status %}
+            {% if request_status == "dne" %}
+                <div class="container white" style="padding: 1.5rem; margin-top: 1rem; margin-bottom: 1rem">
+                    <p class="flow-text" style="width: 95%; margin: auto">Want to be an instructor? Sign up below</p>
+                    <input id="preferred-name" type="text" placeholder="Preferred name"
+                           style="display: block; width: 95%; margin: auto">
+                    <input id="user-email" type="email" placeholder="Email"
+                           style="display: block; width: 95%; margin: auto">
+                    <textarea id="reason-instructor" class="materialize-textarea"
+                              placeholder="Please tell us why you would make a good instructor"
+                              style="display:block; width: 95%; margin: 1.5rem auto 1.5rem auto"></textarea>
+                    <button onclick="submitInstructorRequest()" style="margin-left:2.5%" class="btn">submit</button>
+                </div>
+            {% elif request_status == "pending" %}
+                <div class="container white status-message">You have requested to be an instructor and your status is
+                    pending.
+                </div>
+            {% elif request_status == "denied" %}
+                <div class="container white status-message">You are request to be an instructor has been denied.</div>
+            {% else %}
+                <div class="container white status-message">You request to be an instructor has been accepted.</div>
+            {% endif %}
         {% endif %}
-
     </div>
-    {% endif %}
+
     <div class="container">
         <div class="row">
             <div class="col s12 m6">
@@ -39,18 +55,20 @@
                     <div class="card-content">
                         <span class="card-title">About</span>
                         <p>CodeFlower is a website that can help middle school and high school students the fundamental
-                            basics of computer programming, which can help be a learning tool for people who want to pursue
+                            basics of computer programming, which can help be a learning tool for people who want to
+                            pursue
                             Computer Science in the future.
                         </p>
                     </div>
                 </div>
             </div>
             <div class="col s12 m6">
-                 <div class="card white">
+                <div class="card white">
                     <div class="card-content">
                         <span class="card-title">How it works</span>
                         <p> CodeFlower has offers programming topics selected to give you a basic idea of how computer
-                            programming works. Once you select a Topic you are interested in you may work through lessons
+                            programming works. Once you select a Topic you are interested in you may work through
+                            lessons
                             and test your code in the browser so you can verify you what you have learned. Once you
                             are done with a lesson you will take a quiz to solidify your understanding and move to the
                             next lesson/topic.
@@ -60,4 +78,45 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const validateEmail = (email) => {
+            return email.match(
+                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            );
+        };
+
+        function submitInstructorRequest() {
+            const email = document.getElementById("user-email").value;
+            const prefName = document.getElementById("preferred-name").value;
+            const reason = document.getElementById("reason-instructor").value;
+
+            if (email === "" || prefName === "" || reason === "") {
+                alert("You must fill in all form fields.");
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                alert("Your email is not valid.");
+                return;
+            }
+
+            $.ajax({
+                method: "POST",
+                url: "{% url 'instructor_request' %}",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                data: {
+                    "email": email,
+                    "pref_name": prefName,
+                    "reason": reason
+                },
+                success: function (data) {
+                    $("#instructor-request-wrapper").html(data);
+                },
+                error: function () {
+                    alert("Your request could not be precessed at this moment please try logging out and back in");
+                }
+            });
+        }
+    </script>
 {% endblock %}

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Topic, Lesson, LessonQuestion, LessonQuestionOption, UserLessonProgress, LessonComment, \
-    LessonCommentReply
+    LessonCommentReply, InstructorRequest
 from django.contrib.auth.models import User
 
 from django.http import JsonResponse
@@ -344,10 +344,11 @@ def instructor_request(request):
     if request.method != 'POST':
         return render(request, 'main/home.html')
 
+    pref_name = request.POST.get('pref_name')
     email = request.POST.get('email')
     reason = request.POST.get('reason')
 
-    new_request = InstructorRequest(user=request.user, email=email, reason=reason, status="pending")
+    new_request = InstructorRequest(user=request.user, pref_name=pref_name, email=email, reason=reason, status="pending")
     new_request.save()
 
     return render(request, 'main/refreshTemplate/instructorRequest.html')
