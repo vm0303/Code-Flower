@@ -79,7 +79,8 @@
         function add_question() {
             const title = $('#qtitle').val();
             const question = $('#qname').val();
-            const publish = $('#publish:checked').val() == null ? 'True' : 'False';
+            const publish = $('#publish2:checked').val() == null ? 'False' : 'True';
+            console.log(publish);
             const question_type = $('input[name="qtype"]:checked').val();
             const difficulty = $('#difficulty').val();
             let optionsToAdd;
@@ -233,7 +234,7 @@
                 <label for="qname">Question</label>
                 <textarea id="qname" class="materialize-textarea" style="height: 10vw;"></textarea><br><br>
                 <label for="publish2">
-                    <input type="checkbox" id="publish2" value="true"/>
+                    <input type="checkbox" id="publish2" checked="checked"/>
                     <span>Publish</span>
                 </label>
                 <p>Question type: </p>
