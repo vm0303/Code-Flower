@@ -37,3 +37,11 @@ def get_lesson_progress(user_name, lesson_id):
          return math.trunc(UserLessonProgress.objects.get(user=curr_user, lesson=curr_lesson).score)
     except UserLessonProgress.DoesNotExist:
         return 0
+
+@register.simple_tag
+def get_instructor_request_status(user_name):
+    curr_user = User.objects.get(username=user_name)
+    try:
+        return InstructorRequest.objects.get(user=curr_user).status
+    except InstructorRequest.DoesNotExist:
+        return "dne"

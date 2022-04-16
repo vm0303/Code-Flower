@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Topic, Lesson, LessonQuestion, LessonQuestionOption, UserLessonProgress, LessonComment, \
-    LessonCommentReply
+    LessonCommentReply, InstructorRequest
 from django.contrib.auth.models import User
 
 from django.http import JsonResponse
@@ -77,6 +77,17 @@ def edit_topic(request, topic_id):
     return render(request, 'main/add_lesson.html', context)
 
 
+def delete_topic(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+    if request.method == 'POST':
+        topic_id = request.POST.get('topic_id')
+        topic = Topic.objects.get(id=topic_id)
+        topic.delete();
+        t = Topic.objects.all()
+        return render(request, 'main/refreshTemplate/topic_template.html', {'topics': t})
+
+
 def create_lesson(request):
     if not request.user.is_superuser:
         return render(request, 'main/home.html')
@@ -121,6 +132,17 @@ def edit_lesson(request, lesson_id):
         return render(request, 'main/add_quizzes.html', context)
 
 
+def delete_lesson(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        lesson_id = request.POST.get('lesson_id')
+        lesson = Lesson.objects.get(id=lesson_id)
+        lesson.delete()
+        l = Lesson.objects.all()
+        return render(request, 'main/refreshTemplate/lesson_template.html', {'lessons': l})
+
 def create_question(request, lesson_id):
     if not request.user.is_superuser:
         return render(request, 'main/home.html')
@@ -153,6 +175,18 @@ def create_question(request, lesson_id):
     if request.method == 'GET':
         return render(request, 'main/refreshTemplate/quiz_form.html')
 
+def delete_question(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        question_id = request.POST.get('quiz_id')
+        question = LessonQuestion.objects.get(id=question_id)
+        question.delete()
+        q = LessonQuestion.objects.all()
+        return render(request, 'main/refreshTemplate/quiz_template.html', {'quizzes': q})
+
+
 def publish_topic(request):
     if not request.user.is_superuser:
         return render(request, 'main/home.html')
@@ -164,6 +198,7 @@ def publish_topic(request):
         topic.save()
         return render(request, 'main/admin.html')
 
+
 def publish_lesson(request):
     if not request.user.is_superuser:
         return render(request, 'main/home.html')
@@ -173,6 +208,17 @@ def publish_lesson(request):
         lesson = Lesson.objects.get(id=lesson_id)
         lesson.published = not lesson.published
         lesson.save()
+        return render(request, 'main/admin.html')
+
+def publish_question(request):
+    if not request.user.is_superuser:
+        return render(request, 'main/home.html')
+
+    if request.method == 'POST':
+        question_id = request.POST.get('quiz_id')
+        question = LessonQuestion.objects.get(id=question_id)
+        question.published = not question.published
+        question.save()
         return render(request, 'main/admin.html')
 
 def quiz_processing(request):
@@ -308,3 +354,21 @@ def delete_lesson_comment_reply(request):
 
     replies = LessonCommentReply.objects.filter(parent=comment_foreign_key)
     return render(request, 'main/refreshTemplate/lesson_comment_replies.html', {'replies': replies})
+
+
+# this should throw an exception instead of redirect
+def instructor_request(request):
+    if not request.user.is_authenticated:
+        return render(request, 'main/home.html', {'no_auth_message': True})
+
+    if request.method != 'POST':
+        return render(request, 'main/home.html')
+
+    pref_name = request.POST.get('pref_name')
+    email = request.POST.get('email')
+    reason = request.POST.get('reason')
+
+    new_request = InstructorRequest(user=request.user, pref_name=pref_name, email=email, reason=reason, status="pending")
+    new_request.save()
+
+    return render(request, 'main/refreshTemplate/instructorRequest.html')

@@ -62,8 +62,15 @@
                             <i class="material-icons">edit</i>
                         </button>
                     </a>
-                    <button class="pub btn-floating red" style="float:right">
-                        <i class="material-icons" id="{{ topic.id }}">check_box</i>
+                    <button class="pub btn-floating" style="float:right">
+                        {% if topic.published %}
+                            <i class="published material-icons" id="{{ topic.id }}">check_box</i>
+                        {% else %}
+                            <i class="published material-icons" id="{{ topic.id }}">check_box_outline_blank</i>
+                        {% endif %}
+                    </button>
+                    <button class="btn-floating red" style="float:right" onclick="deleteTopic({{ topic.id }})">
+                        <i class="material-icons">delete</i>
                     </button>
                 </div>
             {% endfor %}
@@ -92,7 +99,7 @@
             <h4>All topics</h4>
             <hr>
             {% for topic in topics reversed %}
-                <div class="card">
+                <div>
                     <p style="padding: 1rem; display: inline-block">{{ topic.name }}</p>
                 </div>
             {% endfor %}
@@ -107,7 +114,7 @@
             <h4>All lessons</h4>
             <hr>
             {% for lesson in lessons reversed %}
-                <div class="card">
+                <div>
                     <p style="padding: 1rem; display: inline-block">{{ lesson.name }}</p>
                 </div>
             {% endfor %}
@@ -122,7 +129,7 @@
             <h4>All quizzes</h4>
             <hr>
             {% for quiz in quizzes reversed %}
-                <div class="card">
+                <div>
                     <p style="padding: 1rem; display: inline-block">{{ quiz.name }}</p>
                 </div>
             {% endfor %}
@@ -168,7 +175,7 @@
         });
 
         $('.pub').on('click', function () {
-            let icon = $(this).find('.material-icons');
+            let icon = $(this).find('.published');
             if (icon.text() == 'check_box') icon.text('check_box_outline_blank');
             else icon.text('check_box');
             console.log(icon.attr('id'))
@@ -188,5 +195,23 @@
             });
         });
 
+        function deleteTopic(topic_id) {
+            if (confirm('Deleting this topic will delete all lessons and questions in it. Are you sure?')) {
+                $.ajax({
+                    method: "POST",
+                    url: "{% url 'delete_topic' %}",
+                    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                    data: {
+                        'topic_id': topic_id,
+                    },
+                    success: function (data) {
+                        $('#topics-data').html(data);
+                    },
+                    error: function () {
+                        alert('Cannot delete topic at this time');
+                    }
+                });
+            }
+        }
     </script>
 {% endblock %}
